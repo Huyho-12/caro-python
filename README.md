@@ -165,11 +165,6 @@ caro-python/
 - Người đầu tiên có 5 ô liên tiếp (ngang/dọc/chéo) thắng
 - Mỗi lượt có 60 giây
 
-## Tác giả
-
-Chuyển đổi từ Java sang Python
-Original Java version: https://github.com/Duc-ju/caro-game-client
-
 ## License
 
 MIT License
