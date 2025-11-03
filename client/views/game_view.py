@@ -9,7 +9,7 @@ import os
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.constants import BOARD_SIZE, WIN_CONDITION, GAME_TIMEOUT
+from shared.constants import INITIAL_BOARD_SIZE, WIN_CONDITION, GAME_TIMEOUT
 
 
 class GameView:
@@ -24,7 +24,8 @@ class GameView:
         self.my_turn = is_host  # Host starts first
         
         # Game state
-        self.board = [[0 for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+        self.board_size = INITIAL_BOARD_SIZE
+        self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         self.buttons = []
         self.game_over = False
         self.timer_seconds = GAME_TIMEOUT
@@ -106,26 +107,49 @@ class GameView:
         self.competitor_turn_label.pack(padx=20, pady=2)
     
     def create_game_board(self):
-        """Create game board"""
-        board_frame = tk.Frame(self.window, bg="white")
-        board_frame.pack(padx=10, pady=10)
+        """Create game board with scrollbars"""
+        # Container frame with scrollbars
+        container = tk.Frame(self.window)
+        container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        
+        # Create canvas
+        canvas = tk.Canvas(container, width=600, height=400, bg="white")
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Add scrollbars
+        v_scrollbar = tk.Scrollbar(container, orient=tk.VERTICAL, command=canvas.yview)
+        v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        h_scrollbar = tk.Scrollbar(self.window, orient=tk.HORIZONTAL, command=canvas.xview)
+        h_scrollbar.pack(fill=tk.X)
+        
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+        
+        # Create frame inside canvas
+        board_frame = tk.Frame(canvas, bg="white")
+        canvas_window = canvas.create_window((0, 0), window=board_frame, anchor="nw")
         
         # Create buttons for board
-        for i in range(BOARD_SIZE):
+        for i in range(self.board_size):
             row = []
-            for j in range(BOARD_SIZE):
+            for j in range(self.board_size):
                 btn = tk.Button(board_frame, text="", width=2, height=1,
-                              font=("Arial", 16, "bold"), bg="white",
-                              relief=tk.RAISED, bd=2,
+                              font=("Arial", 14, "bold"), bg="white",
+                              relief=tk.RAISED, bd=1,
                               command=lambda x=i, y=j: self.make_move(x, y))
-                btn.grid(row=i, column=j, padx=1, pady=1, sticky="nsew")
+                btn.grid(row=i, column=j, padx=0, pady=0)
                 row.append(btn)
             self.buttons.append(row)
         
-        # Make grid cells expand uniformly
-        for i in range(BOARD_SIZE):
-            board_frame.grid_rowconfigure(i, weight=1, uniform="row")
-            board_frame.grid_columnconfigure(i, weight=1, uniform="col")
+        # Update scroll region
+        board_frame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
+        
+        # Mouse wheel scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        
+        canvas.bind_all("<MouseWheel>", on_mousewheel)
     
     def create_bottom_controls(self):
         """Create bottom control panel"""
@@ -222,14 +246,14 @@ class GameView:
             
             # Check positive direction
             i, j = x + dx, y + dy
-            while 0 <= i < BOARD_SIZE and 0 <= j < BOARD_SIZE and self.board[i][j] == player:
+            while 0 <= i < self.board_size and 0 <= j < self.board_size and self.board[i][j] == player:
                 count += 1
                 i += dx
                 j += dy
             
             # Check negative direction
             i, j = x - dx, y - dy
-            while 0 <= i < BOARD_SIZE and 0 <= j < BOARD_SIZE and self.board[i][j] == player:
+            while 0 <= i < self.board_size and 0 <= j < self.board_size and self.board[i][j] == player:
                 count += 1
                 i -= dx
                 j -= dy
@@ -253,7 +277,13 @@ class GameView:
         self.my_score += 1
         self.update_score_display()
         self.client.socket_handle.write("win,")
-        messagebox.showinfo("Chúc mừng!", "Bạn đã thắng!")
+        # Hiển thị thông báo và hỏi chơi lại
+        result = messagebox.askyesno("Chúc mừng!", 
+                                     "🎉 Bạn đã thắng!\n\nBạn có muốn chơi ván mới không?")
+        if result:
+            self.reset_game()
+        else:
+            self.leave_room()
     
     def on_lose(self):
         """Handle lose"""
@@ -261,13 +291,46 @@ class GameView:
         self.stop_timer()
         self.competitor_score += 1
         self.update_score_display()
-        messagebox.showinfo("Tiếc quá!", "Bạn đã thua")
+        # Hiển thị thông báo và hỏi chơi lại
+        result = messagebox.askyesno("Tiếc quá!", 
+                                     "😢 Bạn đã thua\n\nBạn có muốn chơi ván mới không?")
+        if result:
+            self.reset_game()
+        else:
+            self.leave_room()
     
     def on_draw(self):
         """Handle draw"""
         self.game_over = True
         self.stop_timer()
-        messagebox.showinfo("Hòa!", "Ván đấu hòa")
+        # Hiển thị thông báo và hỏi chơi lại
+        result = messagebox.askyesno("Hòa!", 
+                                     "🤝 Ván đấu hòa!\n\nBạn có muốn chơi ván mới không?")
+        if result:
+            self.reset_game()
+        else:
+            self.leave_room()
+    
+    def reset_game(self):
+        """Reset game board for new round"""
+        # Reset game state
+        self.game_over = False
+        self.my_turn = self.is_host  # Host starts first
+        self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
+        
+        # Reset all buttons
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                self.buttons[i][j].config(text="", bg="white", state=tk.NORMAL)
+        
+        # Update display
+        self.update_turn_display()
+        if self.my_turn:
+            self.start_timer()
+        
+        # Notify server about new game
+        self.client.socket_handle.write("new-game,")
+        messagebox.showinfo("Ván mới", "Bắt đầu ván đấu mới!")
     
     def update_turn_display(self):
         """Update turn indicators"""

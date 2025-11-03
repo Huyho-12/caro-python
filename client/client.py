@@ -61,10 +61,10 @@ class Client:
         """Open home view"""
         print(f"Opening home view for user: {self.user.nickname if self.user else 'None'}")
         
-        # Hide old window instead of destroying
+        # Close old window properly
         if self.current_view and hasattr(self.current_view, 'window'):
             try:
-                self.current_view.window.withdraw()
+                self.current_view.window.destroy()
             except:
                 pass
         
@@ -82,10 +82,10 @@ class Client:
         """Open game view"""
         print(f"Opening game view for room {room_id}")
         
-        # Hide old window instead of destroying
+        # Close old window properly
         if self.current_view and hasattr(self.current_view, 'window'):
             try:
-                self.current_view.window.withdraw()
+                self.current_view.window.destroy()
             except:
                 pass
         
@@ -102,10 +102,10 @@ class Client:
         """Open AI game view"""
         print(f"Opening AI game view with difficulty: {difficulty}")
         
-        # Hide old window
+        # Close old window properly
         if self.current_view and hasattr(self.current_view, 'window'):
             try:
-                self.current_view.window.withdraw()
+                self.current_view.window.destroy()
             except:
                 pass
         

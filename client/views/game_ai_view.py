@@ -11,7 +11,7 @@ import time
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.constants import BOARD_SIZE, WIN_CONDITION
+from shared.constants import INITIAL_BOARD_SIZE, WIN_CONDITION
 from ai_player import AIPlayer
 
 
@@ -21,11 +21,12 @@ class GameAIView:
     def __init__(self, client, difficulty="medium"):
         self.client = client
         self.difficulty = difficulty
-        self.ai = AIPlayer(difficulty)
+        self.board_size = INITIAL_BOARD_SIZE
+        self.ai = AIPlayer(difficulty, self.board_size)
         self.my_turn = True  # Player starts first
         
         # Game state
-        self.board = [[0 for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+        self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         self.buttons = []
         self.game_over = False
         self.my_score = 0
@@ -106,26 +107,26 @@ class GameAIView:
         self.ai_turn_label.pack(padx=20, pady=2)
     
     def create_game_board(self):
-        """Create game board"""
-        board_frame = tk.Frame(self.window, bg="white")
-        board_frame.pack(padx=10, pady=10)
+        """Create simple game board (no scrollbars)"""
+        # Container frame
+        container = tk.Frame(self.window, bg="white")
+        container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         
-        # Create buttons for board
-        for i in range(BOARD_SIZE):
+        # Create frame for board
+        board_frame = tk.Frame(container, bg="white")
+        board_frame.pack(expand=True)
+        
+        # Create board buttons
+        for i in range(self.board_size):
             row = []
-            for j in range(BOARD_SIZE):
-                btn = tk.Button(board_frame, text="", width=2, height=1,
-                              font=("Arial", 16, "bold"), bg="white",
-                              relief=tk.RAISED, bd=2,
+            for j in range(self.board_size):
+                btn = tk.Button(board_frame, text="", width=3, height=1,
+                              font=("Arial", 14, "bold"), bg="white",
+                              relief=tk.RAISED, bd=1,
                               command=lambda x=i, y=j: self.make_move(x, y))
-                btn.grid(row=i, column=j, padx=1, pady=1, sticky="nsew")
+                btn.grid(row=i, column=j, padx=0, pady=0)
                 row.append(btn)
             self.buttons.append(row)
-        
-        # Make grid cells expand uniformly
-        for i in range(BOARD_SIZE):
-            board_frame.grid_rowconfigure(i, weight=1, uniform="row")
-            board_frame.grid_columnconfigure(i, weight=1, uniform="col")
     
     def create_bottom_controls(self):
         """Create bottom control panel"""
@@ -222,7 +223,7 @@ class GameAIView:
             j -= 1
         # Right
         j = y + 1
-        while j < BOARD_SIZE and self.board[x][j] == symbol:
+        while j < self.board_size and self.board[x][j] == symbol:
             count += 1
             j += 1
         if count >= WIN_CONDITION:
@@ -237,7 +238,7 @@ class GameAIView:
             i -= 1
         # Down
         i = x + 1
-        while i < BOARD_SIZE and self.board[i][y] == symbol:
+        while i < self.board_size and self.board[i][y] == symbol:
             count += 1
             i += 1
         if count >= WIN_CONDITION:
@@ -253,7 +254,7 @@ class GameAIView:
             j -= 1
         # Bottom-right
         i, j = x + 1, y + 1
-        while i < BOARD_SIZE and j < BOARD_SIZE and self.board[i][j] == symbol:
+        while i < self.board_size and j < self.board_size and self.board[i][j] == symbol:
             count += 1
             i += 1
             j += 1
@@ -264,13 +265,13 @@ class GameAIView:
         count = 1
         # Top-right
         i, j = x - 1, y + 1
-        while i >= 0 and j < BOARD_SIZE and self.board[i][j] == symbol:
+        while i >= 0 and j < self.board_size and self.board[i][j] == symbol:
             count += 1
             i -= 1
             j += 1
         # Bottom-left
         i, j = x + 1, y - 1
-        while i < BOARD_SIZE and j >= 0 and self.board[i][j] == symbol:
+        while i < self.board_size and j >= 0 and self.board[i][j] == symbol:
             count += 1
             i += 1
             j -= 1
@@ -281,8 +282,8 @@ class GameAIView:
     
     def is_board_full(self):
         """Check if board is full"""
-        for i in range(BOARD_SIZE):
-            for j in range(BOARD_SIZE):
+        for i in range(self.board_size):
+            for j in range(self.board_size):
                 if self.board[i][j] == 0:
                     return False
         return True
@@ -301,26 +302,33 @@ class GameAIView:
         self.game_over = True
         self.my_score += 1
         self.score_label.config(text=f"Tỉ số: {self.my_score} - {self.ai_score}")
-        messagebox.showinfo("Chúc mừng!", "🎉 Bạn đã thắng!")
-        self.ask_play_again()
+        # Hỏi chơi lại ngay
+        result = messagebox.askyesno("Chúc mừng!", 
+                                     f"🎉 Bạn đã thắng!\n\nTỉ số hiện tại: {self.my_score} - {self.ai_score}\n\nBạn có muốn chơi ván mới không?")
+        if result:
+            self.new_game()
+        else:
+            self.go_home()
     
     def on_lose(self):
         """Handle player lose"""
         self.game_over = True
         self.ai_score += 1
         self.score_label.config(text=f"Tỉ số: {self.my_score} - {self.ai_score}")
-        messagebox.showinfo("Thua rồi!", "😢 AI đã thắng!")
-        self.ask_play_again()
+        # Hỏi chơi lại ngay
+        result = messagebox.askyesno("Tiếc quá!", 
+                                     f"😢 AI đã thắng!\n\nTỉ số hiện tại: {self.my_score} - {self.ai_score}\n\nBạn có muốn chơi ván mới không?")
+        if result:
+            self.new_game()
+        else:
+            self.go_home()
     
     def on_draw(self):
         """Handle draw"""
         self.game_over = True
-        messagebox.showinfo("Hòa!", "🤝 Ván đấu hòa!")
-        self.ask_play_again()
-    
-    def ask_play_again(self):
-        """Ask if player wants to play again"""
-        result = messagebox.askyesno("Chơi lại?", "Bạn có muốn chơi ván khác không?")
+        # Hỏi chơi lại ngay
+        result = messagebox.askyesno("Hòa!", 
+                                     f"🤝 Ván đấu hòa!\n\nTỉ số hiện tại: {self.my_score} - {self.ai_score}\n\nBạn có muốn chơi ván mới không?")
         if result:
             self.new_game()
         else:
@@ -330,11 +338,11 @@ class GameAIView:
         """Start new game"""
         self.game_over = False
         self.my_turn = True
-        self.board = [[0 for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+        self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         
         # Reset buttons
-        for i in range(BOARD_SIZE):
-            for j in range(BOARD_SIZE):
+        for i in range(self.board_size):
+            for j in range(self.board_size):
                 self.buttons[i][j].config(text="", bg="white", state=tk.NORMAL)
         
         self.update_turn_display()
