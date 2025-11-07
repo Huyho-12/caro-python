@@ -30,7 +30,7 @@ class HomeView:
         self.create_middle_frame()
         self.create_bottom_frame()
         
-        # Handle window close
+        # Hanh dong khi dong cua so window
         self.window.protocol("WM_DELETE_WINDOW", self.on_closing)
     
     def center_window(self):
