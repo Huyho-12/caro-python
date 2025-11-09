@@ -1,7 +1,6 @@
 """
 Database configuration for Caro Game Server
 """
-
 # MySQL Configuration (XAMPP)
 DB_CONFIG = {
     'host': 'localhost',

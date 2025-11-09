@@ -1,7 +1,6 @@
 """
 Socket handler for client communication with server
 """
-
 import socket
 import threading
 import sys
@@ -13,7 +12,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from shared.models import User
 from shared.constants import SERVER_HOST, SERVER_PORT
-
 
 class SocketHandle:
     """Handle socket communication with server"""

@@ -6,7 +6,6 @@ import mysql.connector
 from mysql.connector import Error
 import sys
 import os
-
 # Add parent directory to path to import shared modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import from same directory
