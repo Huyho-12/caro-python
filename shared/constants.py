@@ -16,7 +16,10 @@ except ImportError:
     SERVER_PORT = 7777
 
 # Game Settings
-BOARD_SIZE = 15  # 15x15 board
+INITIAL_BOARD_SIZE = 15  # Start with 15x15 board
+MAX_BOARD_SIZE = 50  # Can expand up to 50x50
+BOARD_EXPANSION_SIZE = 5  # Expand by 5 cells each time
+BOARD_SIZE = INITIAL_BOARD_SIZE  # Current board size (dynamic)
 WIN_CONDITION = 5  # 5 in a row to win
 
 # Game Timer

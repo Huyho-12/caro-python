@@ -9,7 +9,7 @@ import os
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.constants import INITIAL_BOARD_SIZE, WIN_CONDITION, GAME_TIMEOUT, BOARD_EXPANSION_SIZE, MAX_BOARD_SIZE
+from shared.constants import INITIAL_BOARD_SIZE, WIN_CONDITION, GAME_TIMEOUT
 
 
 class GameView:
@@ -23,14 +23,9 @@ class GameView:
         self.competitor_ip = competitor_ip
         self.my_turn = is_host  # Host starts first
         
-        # Game state (sparse board + viewport)
-        # store only played cells: (x,y) -> 1|2
-        self.board_dict = {}
-        # viewport size (visible cells per side)
-        self.view_size = INITIAL_BOARD_SIZE
-        # top-left global coordinate of viewport
-        self.origin_x = 0
-        self.origin_y = 0
+        # Game state
+        self.board_size = INITIAL_BOARD_SIZE
+        self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         self.buttons = []
         self.game_over = False
         self.timer_seconds = GAME_TIMEOUT
@@ -118,91 +113,43 @@ class GameView:
         container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         
         # Create canvas
-        self.canvas = tk.Canvas(container, width=600, height=400, bg="white")
-        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
+        canvas = tk.Canvas(container, width=600, height=400, bg="white")
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
         # Add scrollbars
-        v_scrollbar = tk.Scrollbar(container, orient=tk.VERTICAL, command=self.canvas.yview)
+        v_scrollbar = tk.Scrollbar(container, orient=tk.VERTICAL, command=canvas.yview)
         v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        h_scrollbar = tk.Scrollbar(container, orient=tk.HORIZONTAL, command=self.canvas.xview)
-        h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
-
-        self.canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
-
+        
+        h_scrollbar = tk.Scrollbar(self.window, orient=tk.HORIZONTAL, command=canvas.xview)
+        h_scrollbar.pack(fill=tk.X)
+        
+        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+        
         # Create frame inside canvas
-        self.board_frame = tk.Frame(self.canvas, bg="white")
-        self.canvas_window = self.canvas.create_window((0, 0), window=self.board_frame, anchor="nw")
+        board_frame = tk.Frame(canvas, bg="white")
+        canvas_window = canvas.create_window((0, 0), window=board_frame, anchor="nw")
         
         # Create buttons for board
-        self.build_board_buttons()
-
-        # Update scroll region
-        self.board_frame.update_idletasks()
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
-
-        # Mouse wheel scrolling (vertical) and horizontal via Shift+Wheel
-        def on_mousewheel(event):
-            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-
-        def on_shift_mousewheel(event):
-            # Shift+wheel scrolls horizontally
-            self.canvas.xview_scroll(int(-1 * (event.delta / 120)), "units")
-
-        # Bind wheel events to canvas so the user can scroll
-        self.canvas.bind_all("<MouseWheel>", on_mousewheel)
-        self.canvas.bind_all("<Shift-MouseWheel>", on_shift_mousewheel)
-
-        # Enable panning by click-drag on the canvas
-        self.canvas.bind("<ButtonPress-1>", lambda e: self.canvas.scan_mark(e.x, e.y))
-        self.canvas.bind("<B1-Motion>", lambda e: self.canvas.scan_dragto(e.x, e.y, gain=1))
-
-    def build_board_buttons(self):
-        """(Re)build the button grid for the current board size and state"""
-        # Destroy existing widgets if any
-        try:
-            for r in getattr(self, 'buttons', []):
-                for b in r:
-                    b.destroy()
-        except Exception:
-            pass
-
-        self.buttons = []
-        # Build buttons for the viewport area [origin_x .. origin_x+view_size-1]
-        for vi in range(self.view_size):
+        for i in range(self.board_size):
             row = []
-            gx = self.origin_x + vi
-            for vj in range(self.view_size):
-                gy = self.origin_y + vj
-                val = self.board_dict.get((gx, gy), 0)
-                text = ""
-                state = tk.NORMAL
-                bg = "white"
-                if val == 1:
-                    text = "X"
-                    bg = "#4CAF50"
-                    state = tk.DISABLED
-                elif val == 2:
-                    text = "O"
-                    bg = "#2196F3"
-                    state = tk.DISABLED
-
-                btn = tk.Button(self.board_frame, text=text, width=2, height=1,
-                                font=("Arial", 14, "bold"), bg=bg,
-                                relief=tk.RAISED, bd=1,
-                                state=state,
-                                command=lambda x=gx, y=gy: self.make_move(x, y))
-                btn.grid(row=vi, column=vj, padx=0, pady=0)
+            for j in range(self.board_size):
+                btn = tk.Button(board_frame, text="", width=2, height=1,
+                              font=("Arial", 14, "bold"), bg="white",
+                              relief=tk.RAISED, bd=1,
+                              command=lambda x=i, y=j: self.make_move(x, y))
+                btn.grid(row=i, column=j, padx=0, pady=0)
                 row.append(btn)
             self.buttons.append(row)
-
+        
         # Update scroll region
-        self.board_frame.update_idletasks()
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
-
-    def expand_board_if_needed(self, x, y):
-        # No-op in sparse model; kept for backward compatibility
-        return x, y
+        board_frame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
+        
+        # Mouse wheel scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        
+        canvas.bind_all("<MouseWheel>", on_mousewheel)
     
     def create_bottom_controls(self):
         """Create bottom control panel"""
@@ -243,33 +190,16 @@ class GameView:
             messagebox.showwarning("Cảnh báo", "Chưa đến lượt của bạn")
             return
         
-        # Check existing move
-        if self.board_dict.get((x, y), 0) != 0:
+        if self.board[x][y] != 0:
             messagebox.showwarning("Cảnh báo", "Ô này đã được đánh")
             return
-
-        # Make move (store in dict)
-        self.board_dict[(x, y)] = 1  # 1 for player, 2 for competitor
-
-        # If the move is inside current viewport, update button; otherwise center viewport
-        vi = x - self.origin_x
-        vj = y - self.origin_y
-        if 0 <= vi < self.view_size and 0 <= vj < self.view_size:
-            try:
-                self.buttons[vi][vj].config(text="X", bg="#4CAF50", fg="white", state=tk.DISABLED)
-            except Exception:
-                pass
-        else:
-            # center viewport on the move
-            self.origin_x = x - (self.view_size // 2)
-            self.origin_y = y - (self.view_size // 2)
-            self.build_board_buttons()
+        
+        # Make move
+        self.board[x][y] = 1  # 1 for player, 2 for competitor
+        self.buttons[x][y].config(text="X", bg="#4CAF50", fg="white", state=tk.DISABLED)
         
         # Send move to server
-        try:
-            self.client.socket_handle.write(f"user-move,{x},{y}")
-        except Exception:
-            pass
+        self.client.socket_handle.write(f"user-move,{x},{y}")
         
         # Check win
         if self.check_win(x, y, 1):
@@ -281,28 +211,15 @@ class GameView:
             self.on_draw()
             return
         
-    # Switch turn
+        # Switch turn
         self.my_turn = False
         self.update_turn_display()
         self.stop_timer()
     
     def on_competitor_move(self, x, y):
         """Handle competitor move"""
-        # Store competitor move
-        self.board_dict[(x, y)] = 2
-
-        # If move is inside viewport, update; otherwise center viewport on it
-        vi = x - self.origin_x
-        vj = y - self.origin_y
-        if 0 <= vi < self.view_size and 0 <= vj < self.view_size:
-            try:
-                self.buttons[vi][vj].config(text="O", bg="#2196F3", fg="white", state=tk.DISABLED)
-            except Exception:
-                pass
-        else:
-            self.origin_x = x - (self.view_size // 2)
-            self.origin_y = y - (self.view_size // 2)
-            self.build_board_buttons()
+        self.board[x][y] = 2
+        self.buttons[x][y].config(text="O", bg="#2196F3", fg="white", state=tk.DISABLED)
         
         # Check if competitor wins
         if self.check_win(x, y, 2):
@@ -320,33 +237,38 @@ class GameView:
         self.start_timer()
     
     def check_win(self, x, y, player):
-        """Check if player wins at position (x, y) using sparse board dict."""
+        """Check if player wins at position (x, y)"""
+        # Check 4 directions: horizontal, vertical, diagonal, anti-diagonal
         directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
+        
         for dx, dy in directions:
             count = 1
-            # forward
+            
+            # Check positive direction
             i, j = x + dx, y + dy
-            while self.board_dict.get((i, j), 0) == player:
+            while 0 <= i < self.board_size and 0 <= j < self.board_size and self.board[i][j] == player:
                 count += 1
                 i += dx
                 j += dy
-
-            # backward
+            
+            # Check negative direction
             i, j = x - dx, y - dy
-            while self.board_dict.get((i, j), 0) == player:
+            while 0 <= i < self.board_size and 0 <= j < self.board_size and self.board[i][j] == player:
                 count += 1
                 i -= dx
                 j -= dy
-
+            
             if count >= WIN_CONDITION:
                 return True
-
+        
         return False
     
     def is_board_full(self):
         """Check if board is full"""
-        # With an effectively infinite sparse board, we never consider it "full"
-        return False
+        for row in self.board:
+            if 0 in row:
+                return False
+        return True
     
     def on_win(self):
         """Handle win"""
@@ -394,22 +316,12 @@ class GameView:
         # Reset game state
         self.game_over = False
         self.my_turn = self.is_host  # Host starts first
-        # clear sparse board
-        self.board_dict.clear()
-        # reset viewport origin
-        self.origin_x = 0
-        self.origin_y = 0
+        self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         
-        # Rebuild buttons for the (empty) viewport
-        self.build_board_buttons()
-
-        # Reset all buttons' visuals
-        for i in range(self.view_size):
-            for j in range(self.view_size):
-                try:
-                    self.buttons[i][j].config(text="", bg="white", state=tk.NORMAL)
-                except Exception:
-                    pass
+        # Reset all buttons
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                self.buttons[i][j].config(text="", bg="white", state=tk.NORMAL)
         
         # Update display
         self.update_turn_display()

@@ -1,14 +1,13 @@
 """
 AI Player for Caro Game using Minimax algorithm
 """
-
 import random
 from shared.constants import WIN_CONDITION
 
 
 class AIPlayer:
     """AI player using Minimax algorithm with alpha-beta pruning"""
-
+    
     def __init__(self, difficulty="medium", board_size=15):
         """
         Initialize AI player
@@ -16,7 +15,6 @@ class AIPlayer:
         board_size: size of the game board
         """
         self.difficulty = difficulty
-        # stored board_size is optional; methods will use the actual board passed in
         self.board_size = board_size
         # Reduced depth for faster response (0 = immediate, 1 = look ahead 1 move)
         self.max_depth = {"easy": 0, "medium": 1, "hard": 2}[difficulty]
@@ -33,9 +31,8 @@ class AIPlayer:
     def get_random_move(self, board):
         """Get random valid move (easy mode)"""
         valid_moves = []
-        n = len(board)
-        for i in range(n):
-            for j in range(n):
+        for i in range(self.self.board_size):
+            for j in range(self.self.board_size):
                 if board[i][j] == 0:
                     valid_moves.append((i, j))
         
@@ -75,9 +72,8 @@ class AIPlayer:
     
     def find_winning_move(self, board, symbol):
         """Find immediate winning move for symbol"""
-        n = len(board)
-        for i in range(n):
-            for j in range(n):
+        for i in range(self.self.board_size):
+            for j in range(self.self.board_size):
                 if board[i][j] == 0:
                     board[i][j] = symbol
                     if self.check_winner(board, symbol):
@@ -90,29 +86,30 @@ class AIPlayer:
         """Get moves near existing pieces (optimization)"""
         moves = set()
         has_piece = False
-        # Check if board is empty and collect nearby empty cells
-        n = len(board)
-        for i in range(n):
-            for j in range(n):
+        
+        # Check if board is empty
+        for i in range(self.self.board_size):
+            for j in range(self.self.board_size):
                 if board[i][j] != 0:
                     has_piece = True
                     # Add cells around this piece (reduced range for speed)
                     for di in range(-1, 2):
                         for dj in range(-1, 2):
                             ni, nj = i + di, j + dj
-                            if (0 <= ni < n and 0 <= nj < n and board[ni][nj] == 0):
+                            if (0 <= ni < self.board_size and 0 <= nj < self.board_size 
+                                and board[ni][nj] == 0):
                                 moves.add((ni, nj))
         
         # If board is empty, start in center
         if not has_piece:
-            center = len(board) // 2
+            center = self.board_size // 2
             return [(center, center)]
         
         # Limit number of moves to consider (max 15 for speed)
-        moves_list = list(moves) if moves else [(len(board) // 2, len(board) // 2)]
+        moves_list = list(moves) if moves else [(self.board_size // 2, self.board_size // 2)]
         if len(moves_list) > 15:
             # Prioritize moves closer to center
-            center = len(board) // 2
+            center = self.board_size // 2
             moves_list.sort(key=lambda m: abs(m[0] - center) + abs(m[1] - center))
             moves_list = moves_list[:15]
         
@@ -159,29 +156,29 @@ class AIPlayer:
     def evaluate_board(self, board):
         """Evaluate board position"""
         score = 0
-        # Evaluate all lines using the actual board size
-        n = len(board)
+        
+        # Evaluate all lines
         # Rows
-        for i in range(n):
-            for j in range(n - WIN_CONDITION + 1):
+        for i in range(self.self.board_size):
+            for j in range(self.board_size - WIN_CONDITION + 1):
                 line = [board[i][j + k] for k in range(WIN_CONDITION)]
                 score += self.evaluate_line(line)
         
         # Columns
-        for i in range(n - WIN_CONDITION + 1):
-            for j in range(n):
+        for i in range(self.board_size - WIN_CONDITION + 1):
+            for j in range(self.self.board_size):
                 line = [board[i + k][j] for k in range(WIN_CONDITION)]
                 score += self.evaluate_line(line)
         
         # Diagonals (top-left to bottom-right)
-        for i in range(n - WIN_CONDITION + 1):
-            for j in range(n - WIN_CONDITION + 1):
+        for i in range(self.board_size - WIN_CONDITION + 1):
+            for j in range(self.board_size - WIN_CONDITION + 1):
                 line = [board[i + k][j + k] for k in range(WIN_CONDITION)]
                 score += self.evaluate_line(line)
         
         # Diagonals (top-right to bottom-left)
-        for i in range(n - WIN_CONDITION + 1):
-            for j in range(WIN_CONDITION - 1, n):
+        for i in range(self.board_size - WIN_CONDITION + 1):
+            for j in range(WIN_CONDITION - 1, self.board_size):
                 line = [board[i + k][j - k] for k in range(WIN_CONDITION)]
                 score += self.evaluate_line(line)
         
@@ -224,27 +221,26 @@ class AIPlayer:
     def check_winner(self, board, symbol):
         """Check if symbol has won"""
         # Check rows
-        n = len(board)
-        for i in range(n):
-            for j in range(n - WIN_CONDITION + 1):
+        for i in range(self.self.board_size):
+            for j in range(self.board_size - WIN_CONDITION + 1):
                 if all(board[i][j + k] == symbol for k in range(WIN_CONDITION)):
                     return True
         
         # Check columns
-        for i in range(n - WIN_CONDITION + 1):
-            for j in range(n):
+        for i in range(self.board_size - WIN_CONDITION + 1):
+            for j in range(self.self.board_size):
                 if all(board[i + k][j] == symbol for k in range(WIN_CONDITION)):
                     return True
         
         # Check diagonals (top-left to bottom-right)
-        for i in range(n - WIN_CONDITION + 1):
-            for j in range(n - WIN_CONDITION + 1):
+        for i in range(self.board_size - WIN_CONDITION + 1):
+            for j in range(self.board_size - WIN_CONDITION + 1):
                 if all(board[i + k][j + k] == symbol for k in range(WIN_CONDITION)):
                     return True
         
         # Check diagonals (top-right to bottom-left)
-        for i in range(n - WIN_CONDITION + 1):
-            for j in range(WIN_CONDITION - 1, n):
+        for i in range(self.board_size - WIN_CONDITION + 1):
+            for j in range(WIN_CONDITION - 1, self.board_size):
                 if all(board[i + k][j - k] == symbol for k in range(WIN_CONDITION)):
                     return True
         
@@ -252,9 +248,8 @@ class AIPlayer:
     
     def is_board_full(self, board):
         """Check if board is full"""
-        n = len(board)
-        for i in range(n):
-            for j in range(n):
+        for i in range(self.self.board_size):
+            for j in range(self.self.board_size):
                 if board[i][j] == 0:
                     return False
         return True
