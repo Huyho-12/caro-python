@@ -22,6 +22,9 @@ class HomeView:
         self.window.geometry("800x600")
         self.window.resizable(False, False)
         
+        # Track message processing callback
+        self._msg_process_id = None
+        
         # Center window
         self.center_window()
         
@@ -134,10 +137,12 @@ class HomeView:
     
     def refresh_rooms(self):
         """Request room list from server"""
+        print("[DEBUG] Requesting room list from server")
         self.client.socket_handle.write("get-list-room,")
     
     def update_room_list(self, rooms):
         """Update room list display"""
+        print(f"[DEBUG] Updating room list with {len(rooms)} rooms")
         # Clear current list
         for item in self.room_tree.get_children():
             self.room_tree.delete(item)
@@ -145,6 +150,7 @@ class HomeView:
         # Add rooms
         for room in rooms:
             password_status = "Có" if room.get('has_password') else "Không"
+            print(f"[DEBUG] Adding room {room['id']} - {room['host']}")
             self.room_tree.insert("", tk.END, values=(
                 room['id'],
                 room['host'],
@@ -152,13 +158,28 @@ class HomeView:
                 password_status
             ))
     
+    def add_room_to_list(self, room):
+        """Add a single room to the list"""
+        password_status = "Có" if room.get('has_password') else "Không"
+        # Check if room already exists
+        for item in self.room_tree.get_children():
+            if self.room_tree.item(item)['values'][0] == room['id']:
+                return  # Already in list
+        # Add new room
+        self.room_tree.insert("", tk.END, values=(
+            room['id'],
+            room['host'],
+            f"{room['players']}/2",
+            password_status
+        ))
+    
     def create_room(self):
         """Create new room"""
         # Ask for password
         password = tk.simpledialog.askstring("Tạo phòng", "Nhập mật khẩu (để trống nếu không cần):",
                                             parent=self.window)
         if password is not None:  # User didn't cancel
-            print(f"Creating room with password: '{password}'")
+            print(f"[DEBUG] Creating room with password: '{password}'")
             self.client.socket_handle.write(f"create-room,{password}")
             messagebox.showinfo("Thành công", "Đã tạo phòng! Đợi người chơi khác vào...")
     
@@ -215,11 +236,17 @@ class HomeView:
         """Show window"""
         # Request initial room list
         self.refresh_rooms()
-        # Only start mainloop if not already running
-        # This prevents multiple mainloop calls
+        # No need to schedule message processing anymore - it's handled by SocketHandle thread
     
     def close(self):
         """Close window"""
+        # Cancel message processing callback
+        try:
+            if self._msg_process_id is not None:
+                self.window.after_cancel(self._msg_process_id)
+                self._msg_process_id = None
+        except:
+            pass
         self.window.destroy()
 
 
