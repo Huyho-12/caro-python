@@ -42,6 +42,8 @@ class Client:
                 pass
         
         self.current_view = LoginView(self)
+        # Start processing socket messages in main thread
+        self.socket_handle.process_queue()
         self.current_view.show()
     
     def open_register_view(self):
@@ -59,10 +61,10 @@ class Client:
         """Open home view"""
         print(f"Opening home view for user: {self.user.nickname if self.user else 'None'}")
         
-        # Close old window properly
+        # Hide old window instead of destroying
         if self.current_view and hasattr(self.current_view, 'window'):
             try:
-                self.current_view.window.destroy()
+                self.current_view.window.withdraw()
             except:
                 pass
         
@@ -80,10 +82,10 @@ class Client:
         """Open game view"""
         print(f"Opening game view for room {room_id}")
         
-        # Close old window properly
+        # Hide old window instead of destroying
         if self.current_view and hasattr(self.current_view, 'window'):
             try:
-                self.current_view.window.destroy()
+                self.current_view.window.withdraw()
             except:
                 pass
         
@@ -100,10 +102,10 @@ class Client:
         """Open AI game view"""
         print(f"Opening AI game view with difficulty: {difficulty}")
         
-        # Close old window properly
+        # Hide old window
         if self.current_view and hasattr(self.current_view, 'window'):
             try:
-                self.current_view.window.destroy()
+                self.current_view.window.withdraw()
             except:
                 pass
         
@@ -149,20 +151,14 @@ class Client:
     
     def on_new_room(self, room):
         """Handle new room notification"""
-        # Add room to list directly
-        if self.current_view and hasattr(self.current_view, 'add_room_to_list'):
-            self.current_view.add_room_to_list(room)
-        # Also refresh to be sure
-        elif self.current_view and hasattr(self.current_view, 'refresh_rooms'):
+        # Refresh room list
+        if self.current_view and hasattr(self.current_view, 'refresh_rooms'):
             self.current_view.refresh_rooms()
     
     def on_create_room_success(self, room_id):
         """Handle room creation success"""
         print(f"Room {room_id} created successfully")
         # Stay in home view and wait for opponent
-        # Refresh room list to show the new room
-        if self.current_view and hasattr(self.current_view, 'refresh_rooms'):
-            self.current_view.refresh_rooms()
     
     def on_go_to_room(self, room_id, competitor, is_host, competitor_ip):
         """Handle going to room"""

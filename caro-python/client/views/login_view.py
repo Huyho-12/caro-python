@@ -21,9 +21,6 @@ class LoginView:
         self.window.geometry("400x300")
         self.window.resizable(False, False)
         
-        # Track message processing callback
-        self._msg_process_id = None
-        
         # Center window
         self.center_window()
         
@@ -94,7 +91,7 @@ class LoginView:
         messagebox.showerror("Lỗi", message)
     
     def show(self):
-        """Show the login window"""
+        """Show window"""
         self.window.mainloop()
     
     def close(self):

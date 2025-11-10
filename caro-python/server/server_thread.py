@@ -201,30 +201,25 @@ class ServerThread(threading.Thread):
         
         # Get room list
         elif command == "get-list-room":
-            print(f"[DEBUG] Client {self.client_number} requesting room list")
             room_list_str = "room-list"
             for room in self.server_thread_bus.rooms:
                 if room.user1 and room.user1.user:
                     room_list_str += f",{room.id},{room.get_number_of_users()},"
                     room_list_str += f"{room.user1.user.nickname},"
                     room_list_str += f"{'1' if room.password else '0'}"
-            print(f"[DEBUG] Sending room list: {room_list_str}")
             self.write(room_list_str)
         
         # Create room
         elif command == "create-room":
             password = parts[1] if len(parts) > 1 else ""
-            print(f"[DEBUG] Client {self.client_number} creating room with password: '{password}'")
             from room import Room
             new_room = Room(self.server_thread_bus.get_next_room_id(), self)
             if password:
                 new_room.set_password(password)
             self.room = new_room
             self.server_thread_bus.add_room(new_room)
-            print(f"[DEBUG] Room {new_room.id} created, total rooms: {len(self.server_thread_bus.rooms)}")
             self.write(f"create-room-success,{new_room.id}")
             # Notify others about new room
-            print(f"[DEBUG] Broadcasting new room to other clients")
             self.server_thread_bus.broadcast_new_room(new_room)
         
         # Join room
