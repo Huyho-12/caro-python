@@ -31,8 +31,8 @@ class AIPlayer:
     def get_random_move(self, board):
         """Get random valid move (easy mode)"""
         valid_moves = []
-        for i in range(self.self.board_size):
-            for j in range(self.self.board_size):
+        for i in range(self.board_size):
+            for j in range(self.board_size):
                 if board[i][j] == 0:
                     valid_moves.append((i, j))
         
@@ -127,10 +127,10 @@ class AIPlayer:
             return -1000 + depth
         if depth >= self.max_depth or self.is_board_full(board):
             return self.evaluate_board(board)
-        
+        valid_moves = self.get_smart_moves(board)
         if is_maximizing:
             max_eval = float('-inf')
-            for move in self.get_smart_moves(board):
+            for move in valid_moves:
                 i, j = move
                 board[i][j] = self.ai_symbol
                 eval_score = self.minimax(board, depth + 1, False, alpha, beta)
@@ -142,7 +142,7 @@ class AIPlayer:
             return max_eval
         else:
             min_eval = float('inf')
-            for move in self.get_smart_moves(board):
+            for move in valid_moves:
                 i, j = move
                 board[i][j] = self.player_symbol
                 eval_score = self.minimax(board, depth + 1, True, alpha, beta)
