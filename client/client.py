@@ -4,6 +4,7 @@ Main Client for Caro Game
 import sys
 import os
 import tkinter as tk
+import tkinter.messagebox as messagebox
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -243,7 +244,7 @@ def main():
     
     try:
         client = Client()
-        client.open_login_view()
+        client.start()
     except KeyboardInterrupt:
         print("\nClient interrupted by user")
     except Exception as e:
