@@ -1,19 +1,19 @@
 <div align="center">
 
-# 🎮 Caro Game - Python Edition
+# 🎮 Caro Game - Python Client-Server
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-orange.svg)](https://www.mysql.com/)
+[![Database](https://img.shields.io/badge/database-MySQL-orange.svg)](https://www.mysql.com/)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](https://github.com)
 
-**Trò chơi Caro multiplayer với AI thông minh, kiến trúc client-server hiện đại**
+**Trò chơi Caro (Gomoku) multiplayer với AI thông minh, kiến trúc client-server hiện đại**
 
 [Tính năng](#-tính-năng) •
-[Demo](#-demo) •
 [Cài đặt](#-cài-đặt) •
 [Sử dụng](#-sử-dụng) •
-[Tài liệu](#-tài-liệu)
+[Tài liệu](#-tài-liệu) •
+[Screenshots](#-screenshots)
 
 </div>
 
@@ -21,67 +21,63 @@
 
 ## ✨ Tính năng
 
-### 🖥️ Server
-- ✅ Xử lý đa luồng với nhiều client đồng thời
-- ✅ Quản lý phòng chơi (tạo, vào, rời phòng)
-- ✅ Hệ thống đăng nhập/đăng ký với xác thực
-- ✅ Quản lý trạng thái người chơi (online, offline, playing)
-- ✅ Bảng xếp hạng theo thống kê thắng/thua
-- ✅ Lưu trữ dữ liệu với MySQL
-- ✅ Protocol messaging system
+### 🖥️ Server Side
+- ✅ **Multi-threaded Server** - Xử lý nhiều client đồng thời
+- ✅ **Room Management** - Tạo, vào, rời phòng chơi
+- ✅ **User Authentication** - Đăng nhập/đăng ký với MySQL
+- ✅ **Game State Management** - Quản lý trạng thái game real-time
+- ✅ **Statistics Tracking** - Lưu thống kê thắng/thua/hòa
+- ✅ **Socket Communication** - Protocol messaging system
+- ✅ **Database Integration** - MySQL với mysql-connector-python
 
-### 💻 Client
-- ✅ Giao diện đồ họa đẹp mắt với Tkinter
-- ✅ Đăng nhập/Đăng ký tài khoản
-- ✅ Tạo phòng (có/không mật khẩu)
-- ✅ Tham gia phòng từ danh sách
-- ✅ Chơi game Caro 15x15 (5 in a row to win)
-- ✅ Timer 60 giây cho mỗi lượt
-- ✅ Hiển thị điểm số và lượt chơi
-- ✅ Chat server (hiển thị thông báo)
-- ✅ Xem bảng xếp hạng
-- ✅ **Chơi với AI thông minh** (3 độ khó: Dễ, Trung bình, Khó)
-- ✅ AI sử dụng thuật toán **Minimax với Alpha-Beta Pruning**
+### 💻 Client Side
+- ✅ **Tkinter GUI** - Giao diện đồ họa thân thiện
+- ✅ **Login/Register** - Quản lý tài khoản người chơi
+- ✅ **Room System** - Tạo phòng (có/không mật khẩu), xem danh sách phòng
+- ✅ **Game Board 20x20** - Caro board với win condition: 5 in a row
+- ✅ **Real-time Updates** - Cập nhật nước đi đối thủ ngay lập tức
+- ✅ **Chat System** - Chat trong game với đối thủ
+- ✅ **User Statistics** - Xem thống kê cá nhân (wins, draws, games)
+- ✅ **AI Opponent** - Chơi với AI thông minh (3 độ khó)
 
-### 🌐 Multiplayer
-- ✅ Chơi trên cùng 1 máy (nhiều client)
-- ✅ Chơi trên 2 máy khác nhau (LAN/WiFi)
-- ✅ Cấu hình IP dễ dàng qua file config
-- ✅ Auto-reconnect và xử lý lỗi mạng
+### 🤖 AI Features
+- ✅ **Minimax Algorithm** - Thuật toán tìm kiếm nước đi tốt nhất
+- ✅ **Alpha-Beta Pruning** - Tối ưu hóa performance
+- ✅ **3 Difficulty Levels**:
+  - **Easy** (Depth 1) - Cho người mới
+  - **Medium** (Depth 2) - Thách thức vừa phải
+  - **Hard** (Depth 3) - Đối thủ mạnh
+
+### 🌐 Network Features
+- ✅ **LAN/WiFi Multiplayer** - Chơi qua mạng local
+- ✅ **Multiple Clients** - Nhiều client trên cùng 1 máy
+- ✅ **Configurable IP** - Dễ dàng config qua `network_config.py`
+- ✅ **Error Handling** - Xử lý mất kết nối, timeout
 
 ---
 
-## 📸 Demo
+## 📸 Screenshots
 
-### Giao diện chính
+> **Lưu ý**: Screenshots có trong thư mục `docs/images/` (xem hướng dẫn chụp ảnh tại `docs/QUICKSTART_SCREENSHOTS.md`)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  🎮 CARO GAME - Chào mừng đến với game Caro online!         │
-│                                                              │
-│  📋 Đăng nhập           📋 Đăng ký           🏠 Trang chủ    │
-│  ┌─────────────────┐   ┌──────────────┐    ┌─────────────┐ │
-│  │ Username: ***   │   │ Tạo tài khoản│    │ Danh sách   │ │
-│  │ Password: ***   │   │ mới ngay!    │    │ phòng chơi  │ │
-│  └─────────────────┘   └──────────────┘    └─────────────┘ │
-│                                                              │
-│  🎮 Game Board (15x15)   🤖 AI Mode       👥 Multiplayer   │
-│  ┌───────────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │ X O X O X O X O X │  │ Độ khó: ★★☆  │  │ Room #1      │ │
-│  │ O X O X O X O X O │  │ AI thinking..│  │ 2/2 players  │ │
-│  │ X O X O X O X O X │  └──────────────┘  └──────────────┘ │
-│  └───────────────────┘                                      │
-└─────────────────────────────────────────────────────────────┘
-```
+### Các màn hình chính
+
+| Màn hình | Mô tả |
+|----------|-------|
+| **Login** | Đăng nhập tài khoản |
+| **Register** | Đăng ký tài khoản mới |
+| **Home/Lobby** | Trang chủ với danh sách phòng, tạo phòng, chơi AI |
+| **Game Multiplayer** | Màn hình chơi game 2 người |
+| **Game AI** | Màn hình chơi với AI |
+| **Game Result** | Hiển thị kết quả (Win/Lose/Draw) |
 
 ### Chế độ chơi
 
-| Mode | Description | Status |
-|------|-------------|--------|
-| 🤖 **Single Player** | Chơi với AI (3 độ khó) | ✅ Hoàn thành |
-| 👥 **Local Multiplayer** | Chơi 2 người trên 1 máy | ✅ Hoàn thành |
-| 🌐 **Online Multiplayer** | Chơi qua mạng LAN/WiFi | ✅ Hoàn thành |
-| 🏆 **Tournament** | Chế độ giải đấu | 🚧 Đang phát triển |
+| Mode | Description | Board Size | Status |
+|------|-------------|------------|--------|
+| 🤖 **AI Mode** | Chơi với AI (Easy/Medium/Hard) | 20x20 | ✅ Hoàn thành |
+| 👥 **Multiplayer** | Chơi với người khác (Local/Online) | 20x20 | ✅ Hoàn thành |
+| 🏠 **Practice** | Luyện tập offline | 20x20 | ✅ Hoàn thành |
 
 ---
 
@@ -123,42 +119,52 @@
 ### Kiến trúc hệ thống
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   CARO GAME SYSTEM                       │
-├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  ┌──────────────┐         ┌──────────────┐             │
-│  │   CLIENT 1   │◄───────►│              │             │
-│  └──────────────┘         │              │             │
-│                           │    SERVER    │◄────► MySQL │
-│  ┌──────────────┐         │              │             │
-│  │   CLIENT 2   │◄───────►│  Port 7777   │             │
-│  └──────────────┘         └──────────────┘             │
-│                                                          │
-│  [Tkinter GUI] ◄──► [Socket] ◄──► [Thread Pool]        │
-│        ▲                               ▲                │
-│        │                               │                │
-│    [AI Engine]                    [Room Manager]        │
-│   (Minimax)                      [User Manager]         │
-│                                                          │
-└─────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                    CARO GAME ARCHITECTURE                      │
+├───────────────────────────────────────────────────────────────┤
+│                                                                │
+│  ┌──────────────┐              ┌──────────────┐              │
+│  │  CLIENT 1    │◄────────────►│              │              │
+│  │  (Tkinter)   │   TCP/IP     │              │              │
+│  └──────────────┘   Port 7777  │    SERVER    │◄────► MySQL │
+│        │                        │              │    Database │
+│   [AI Engine]                   │  (Python)    │              │
+│   [Minimax]                     └──────────────┘              │
+│                                        ▲                       │
+│  ┌──────────────┐                     │                       │
+│  │  CLIENT 2    │◄────────────────────┘                       │
+│  │  (Tkinter)   │      Thread per Client                      │
+│  └──────────────┘                                             │
+│                                                                │
+│  Components:                                                  │
+│  • Client: Socket Handler, Views (Login, Home, Game)         │
+│  • Server: ServerThread, Room Manager, User DAO               │
+│  • Shared: User Model, Room Model, Constants                  │
+│                                                                │
+└───────────────────────────────────────────────────────────────┘
 ```
+
+> Xem thêm chi tiết: `docs/ARCHITECTURE.md`
 
 ---
 
 ## 📋 Yêu cầu hệ thống
 
-### Phần cứng
-- **RAM:** 512 MB (tối thiểu), 2 GB (khuyên dùng)
-- **Ổ cứng:** 50 MB khả dụng
-- **CPU:** Dual-core 1.0 GHz trở lên
-- **Mạng:** LAN/WiFi (cho multiplayer online)
+### Phần mềm bắt buộc
+- **Python:** 3.8+ ([Download](https://www.python.org/downloads/))
+- **MySQL:** 8.0+ (XAMPP khuyên dùng - [Download](https://www.apachefriends.org/))
+- **Git:** Để clone repository ([Download](https://git-scm.com/))
 
-### Phần mềm
-- **OS:** Windows 10/11, Linux, macOS
-- **Python:** 3.8 hoặc cao hơn
-- **MySQL:** 8.0+ (XAMPP khuyên dùng cho Windows)
-- **Dependencies:** Xem `requirements.txt`
+### Phần cứng tối thiểu
+- **CPU:** Dual-core 1.0 GHz
+- **RAM:** 512 MB
+- **Disk:** 100 MB khả dụng
+- **Network:** LAN/WiFi (cho multiplayer)
+
+### Hệ điều hành hỗ trợ
+- ✅ Windows 10/11
+- ✅ Linux (Ubuntu 18.04+)
+- ✅ macOS 10.14+
 
 ---
 
@@ -195,175 +201,161 @@ brew install mysql
 brew services start mysql
 ```
 
-### Bước 4: Tạo Database
+### Bước 4: Cấu hình Database
 
+**Tùy chọn 1: Tự động (Khuyên dùng)**
 ```bash
 python create_database.py
 ```
 
 Script sẽ tự động:
+- ✅ Kết nối MySQL (localhost, user: root, no password)
 - ✅ Tạo database `caro_game`
-- ✅ Tạo bảng `user` với schema đầy đủ
-- ✅ Thêm 5 tài khoản mẫu để test
+- ✅ Tạo bảng `user` với đầy đủ fields
+- ✅ Thêm sample accounts
 
-**Tài khoản mẫu:**
-| Username | Password | Role |
-|----------|----------|------|
-| `player1` | `player1` | Người chơi |
-| `player2` | `player2` | Người chơi |
-| `admin` | `admin` | Admin |
+**Tùy chọn 2: Thủ công**
+```sql
+-- Mở MySQL Command Line hoặc phpMyAdmin
+CREATE DATABASE caro_game;
+USE caro_game;
 
-### Bước 5: Kiểm tra cấu hình (Tùy chọn)
+CREATE TABLE user (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    nickname VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    num_wins INT DEFAULT 0,
+    num_draws INT DEFAULT 0,
+    num_games INT DEFAULT 0
+);
+```
 
-**Chơi trên 1 máy:** Bỏ qua bước này
+### Bước 5: Cấu hình Network (Cho multiplayer online)
 
-**Chơi trên 2 máy:**
+**Chơi trên 1 máy:** Dùng localhost (mặc định) - Bỏ qua bước này
+
+**Chơi trên 2+ máy khác nhau:**
+
+1. **Trên máy Server**: Kiểm tra IP
 ```bash
-python check_ip.py  # Xem IP của máy server
+python check_ip.py
+# Output: Your IP: 192.168.1.100
 ```
 
-Sau đó sửa `network_config.py` trên máy client:
+2. **Trên máy Client**: Sửa `network_config.py`
 ```python
-SERVER_IP = "192.168.1.100"  # Thay bằng IP máy server
+SERVER_IP = "192.168.1.100"  # IP của máy server
+SERVER_PORT = 7777            # Mặc định 7777
 ```
+
+> **Lưu ý**: Đảm bảo firewall cho phép port 7777
 
 ---
 
 ## 🎮 Sử dụng
 
-### Khởi động Server
+### 1️⃣ Khởi động Server
+
+Mở terminal/cmd và chạy:
 
 ```bash
 cd caro-python
 python server/server.py
 ```
 
-**Output:**
+**Output mong đợi:**
 ```
 ==================================================
-Caro Game Server - Python Version
+Caro Game Server
 ==================================================
-Server Configuration:
-- Host: 0.0.0.0
-- Port: 7777
-- Max Clients: 50
+Database connection successful
+Server started on 0.0.0.0:7777
+Waiting to accept users...
 ==================================================
-[✓] Database connected successfully
-[✓] Server started on port 7777
-[✓] Waiting for clients...
-==================================================
+```
 
-### Khởi động Client
+### 2️⃣ Khởi động Client
 
-Mở terminal **MỚI** (giữ server chạy):
+**Mở terminal MỚI** (giữ server chạy), sau đó:
 
 ```bash
 python client/main.py
 ```
 
-**Output:**
-```
-==================================================
-Caro Game Client - Python Version
-==================================================
-[✓] Connected to server successfully
-[✓] Client ID: #12345
-==================================================
-```
+Cửa sổ game sẽ mở với màn hình đăng nhập.
 
-### Hướng dẫn sử dụng nhanh
+### 3️⃣ Hướng dẫn sử dụng
 
-1. **Đăng nhập:**
-   - Username: `player1`
-   - Password: `player1`
+#### Đăng nhập/Đăng ký
+- **Đăng nhập**: Nhập username/password → Click "Đăng nhập"
+- **Đăng ký**: Click "Chưa có tài khoản? Đăng ký" → Điền form → Click "Đăng ký"
 
-2. **Chọn chế độ chơi:**
-   - 🤖 **Chơi với AI**: Luyện tập với AI thông minh
-   - 🎮 **Tạo phòng**: Tạo phòng mới cho multiplayer
-   - 📥 **Vào phòng**: Tham gia phòng có sẵn
+#### Chơi với AI
+1. Từ màn hình Home, click **"Chơi với AI"**
+2. Chọn độ khó: Easy / Medium / Hard
+3. Click vào ô để đánh
+4. Win condition: 5 quân liên tiếp (ngang/dọc/chéo)
 
-3. **Chơi game:**
-   - Bàn cờ 15x15 ô
-   - 5 quân liên tiếp để thắng (ngang/dọc/chéo)
-   - Mỗi lượt có 60 giây
+#### Multiplayer Online
+1. **Player 1**: Click "Tạo phòng" → Nhập tên phòng → (Tùy chọn: mật khẩu)
+2. **Player 2**: Chọn phòng từ danh sách → Click "Vào phòng"
+3. Game tự động bắt đầu khi đủ 2 người
 
-**Máy 1 (Server):**
-```bash
-python check_ip.py       # Xem IP: 192.168.1.100
-python server/server.py  # Khởi động server
-```
-
-**Máy 2 (Client):**
-1. Sửa `network_config.py`:
-   ```python
-   SERVER_IP = "192.168.1.100"  # IP máy server
-   ```
-2. Chạy client:
-   ```bash
-   python client/main.py
-   ```
-
-📖 **Chi tiết:** Xem [MULTIPLAYER_GUIDE.md](MULTIPLAYER_GUIDE.md)
+**Board:** 20x20 ô  
+**Win:** 5 quân liên tiếp  
+**Chat:** Gửi tin nhắn cho đối thủ trong game
 
 ---
 
-## Cấu trúc dự án
+## 🌐 Multiplayer trên 2 máy
+
+### Máy Server (Host game)
+
+```bash
+# Bước 1: Xem IP của máy
+python check_ip.py
+# Output: Your IP: 192.168.1.100
+
+# Bước 2: Khởi động server
+python server/server.py
+```
+
+### Máy Client (Join game)
+
+```bash
+# Bước 1: Cấu hình IP server
+# Sửa file network_config.py:
+SERVER_IP = "192.168.1.100"  # IP máy server từ bước trên
+
+# Bước 2: Khởi động client
+python client/main.py
+```
+
+> **Lưu ý**: 
+> - Cả 2 máy phải cùng mạng LAN/WiFi
+> - Firewall phải cho phép port 7777
+> - Chi tiết: [MULTIPLAYER_GUIDE.md](MULTIPLAYER_GUIDE.md)
+
+---
+
+## 📁 Cấu trúc dự án
 
 ```
 caro-python/
-├── server/                        # Server side
-│   ├── server.py                  # Server chính, xử lý kết nối
-│   ├── server_thread.py           # Xử lý từng client
-│   ├── room.py                    # Quản lý phòng chơi
-│   ├── user_dao.py                # Truy vấn database
-│   └── config.py                  # Cấu hình database & server
-│
-├── client/                        # Client side
-│   ├── main.py                    # Entry point
-│   ├── client.py                  # Client logic chính
-│   ├── socket_handle.py           # Xử lý kết nối socket
-│   ├── ai_player.py               # AI player (Minimax algorithm)
-│   └── views/                     # Giao diện người dùng
-│       ├── login_view.py          # Màn hình đăng nhập
-│       ├── register_view.py       # Màn hình đăng ký
-│       ├── home_view.py           # Trang chủ
-│       ├── game_view.py           # Màn hình chơi multiplayer
-│       └── game_ai_view.py        # Màn hình chơi với AI
-│
-├── shared/                        # Code dùng chung
-│   ├── models.py                  # Data models (User, Point)
-│   └── constants.py               # Hằng số & protocol messages
-│
-├── assets/                        # Tài nguyên (hình ảnh, icon, âm thanh)
-│
-├── network_config.py              # Cấu hình IP cho multiplayer
-├── check_ip.py                    # Script kiểm tra IP
-├── create_database.py             # Script tự động tạo database
-├── requirements.txt               # Python dependencies
-│
-├── README.md                      # Tài liệu chính
-├── QUICKSTART.md                  # Hướng dẫn nhanh 5 phút
-├── INSTALL.md                     # Hướng dẫn cài đặt chi tiết
-└── MULTIPLAYER_GUIDE.md           # Hướng dẫn chơi trên 2 máy
-```
-
-## 📖 Cấu trúc dự án
-
-```
-caro-python/
-├── 📁 server/                     # Server-side application
-│   ├── server.py                  # Main server với ThreadPoolExecutor
-│   ├── server_thread.py           # Client handler (protocol processing)
-│   ├── room.py                    # Room management & game logic
-│   ├── user_dao.py                # Database operations (DAO pattern)
+├── 📂 server/                     # Server-side code
+│   ├── server.py                  # Main server, accept connections
+│   ├── server_thread.py           # Handle each client in separate thread
+│   ├── room.py                    # Room management (create, join, leave)
+│   ├── user_dao.py                # Database access layer (MySQL)
 │   └── config.py                  # Database & server configuration
 │
-├── 📁 client/                     # Client-side application
-│   ├── main.py                    # Application entry point
+├── 📂 client/                     # Client-side code
+│   ├── main.py                    # Entry point, start client app
 │   ├── client.py                  # Main client controller
 │   ├── socket_handle.py           # Socket communication handler
-│   ├── ai_player.py               # AI engine (Minimax + Alpha-Beta)
-│   └── 📁 views/                  # GUI components
+│   ├── ai_player.py               # AI opponent (Minimax algorithm)
+│   └── 📁 views/                  # GUI components (Tkinter)
 │       ├── login_view.py          # Login screen
 │       ├── register_view.py       # Registration screen
 │       ├── home_view.py           # Main lobby
@@ -374,22 +366,27 @@ caro-python/
 │   ├── models.py                  # Data models (User, Point)
 │   └── constants.py               # Protocol constants & messages
 │
-├── 📁 assets/                     # Resources
-│   ├── avatar/                    # User avatars
-│   ├── icon/                      # App icons
-│   └── sound/                     # Sound effects (future)
+├── 📁 docs/                       # Technical documentation
+│   ├── README.md                  # Documentation index
+│   ├── ARCHITECTURE.md            # System architecture
+│   ├── FLOWCHARTS.md              # Process flowcharts
+│   ├── PSEUDO_CODE.md             # Algorithm pseudo code
+│   ├── PLANTUML_INDEX.md          # UML diagrams index
+│   └── plantuml/                  # PlantUML diagram files
 │
-├── 🛠️ Tools & Config
-│   ├── network_config.py          # Network configuration
-│   ├── check_ip.py                # IP checker utility
-│   ├── create_database.py         # Database setup script
+├── 📁 assets/                     # Resources
+│
+├── 🛠️ Utilities
+│   ├── network_config.py          # Network IP configuration
+│   ├── check_ip.py                # Check local IP address
+│   ├── create_database.py         # Auto database setup
 │   └── requirements.txt           # Python dependencies
 │
-└── 📚 Documentation
-    ├── README.md                  # This file
-    ├── QUICKSTART.md              # 5-minute quick start
-    ├── INSTALL.md                 # Detailed installation
-    ├── MULTIPLAYER_GUIDE.md       # LAN/WiFi multiplayer guide
+└── 📄 Documentation
+    ├── README.md                  # This file - Main documentation
+    ├── QUICKSTART.md              # 5-minute quick start guide
+    ├── INSTALL.md                 # Detailed installation guide
+    ├── MULTIPLAYER_GUIDE.md       # LAN/WiFi setup guide
     └── CHANGELOG.md               # Version history
 ```
 

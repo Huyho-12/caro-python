@@ -244,7 +244,7 @@ def main():
     
     try:
         client = Client()
-        client.start()
+        client.open_login_view()
     except KeyboardInterrupt:
         print("\nClient interrupted by user")
     except Exception as e:

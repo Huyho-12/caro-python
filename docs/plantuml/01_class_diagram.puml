@@ -1,0 +1,181 @@
+@startuml class_diagram
+
+package "Client" {
+    class Client {
+        - user: User
+        - socket_handle: SocketHandle
+        - current_view: View
+        - game_view: GameView
+        + open_login_view()
+        + open_register_view()
+        + open_home_view()
+        + open_game_view()
+        + open_ai_game_view()
+        + on_login_success()
+        + on_game_result()
+    }
+    
+    class SocketHandle {
+        - client: Client
+        - socket: Socket
+        - receive_thread: Thread
+        - message_queue: Queue
+        + connect(): bool
+        + write(message: str)
+        + read(): str
+        + process_queue()
+        + close()
+    }
+    
+    abstract class View {
+        # client: Client
+        # window: Tk
+        + {abstract} show()
+        + {abstract} close()
+    }
+    
+    class LoginView extends View {
+        - username_entry: Entry
+        - password_entry: Entry
+        + show()
+        + on_login()
+        + show_error(message: str)
+    }
+    
+    class RegisterView extends View {
+        - username_entry: Entry
+        - nickname_entry: Entry
+        - password_entry: Entry
+        + show()
+        + on_register()
+        + show_error(message: str)
+    }
+    
+    class HomeView extends View {
+        - user: User
+        - room_listbox: Listbox
+        - chat_text: Text
+        + show()
+        + refresh_rooms()
+        + create_room()
+        + join_room()
+        + update_room_list()
+    }
+    
+    class GameView extends View {
+        - room_id: int
+        - competitor: User
+        - is_host: bool
+        - board: List[List[int]]
+        - is_my_turn: bool
+        + show()
+        + on_cell_click(x: int, y: int)
+        + on_competitor_move(x: int, y: int)
+        + check_win(): bool
+        + on_win()
+        + on_lose()
+        + on_draw()
+    }
+    
+    class GameAIView extends GameView {
+        - ai_player: AIPlayer
+        - difficulty: str
+        + ai_make_move()
+    }
+    
+    class AIPlayer {
+        - board: List[List[int]]
+        - difficulty: str
+        + get_move(): Tuple[int, int]
+        - minimax(): int
+        - evaluate_board(): int
+        - get_valid_moves(): List
+    }
+    
+    Client *-- SocketHandle
+    Client *-- View
+    GameAIView *-- AIPlayer
+}
+
+package "Shared" {
+    class User {
+        + id: int
+        + username: str
+        + nickname: str
+        + num_wins: int
+        + num_draws: int
+        + num_games: int
+    }
+    
+    class Room {
+        + id: int
+        + name: str
+        + has_password: bool
+        + host: User
+        + player1: User
+        + player2: User
+    }
+    
+    class Constants {
+        + BOARD_SIZE: int = 20
+        + CELL_SIZE: int = 30
+        + HOST: str = "localhost"
+        + PORT: int = 8888
+    }
+}
+
+package "Server" {
+    class Server {
+        - host: str
+        - port: int
+        - socket: Socket
+        - clients: List[ClientThread]
+        - rooms: List[Room]
+        + start()
+        + accept_clients()
+        + broadcast(message: str)
+    }
+    
+    class ServerThread {
+        - client_socket: Socket
+        - address: str
+        - user: User
+        - current_room: Room
+        + run()
+        - handle_login()
+        - handle_register()
+        - handle_create_room()
+        - handle_join_room()
+        - handle_move()
+    }
+    
+    class RoomManager {
+        - rooms: Dict[int, Room]
+        + create_room(): Room
+        + join_room(): bool
+        + leave_room()
+        + get_room_list(): List[Room]
+    }
+    
+    class UserDAO {
+        - db_path: str
+        - connection: Connection
+        + create_user(): bool
+        + get_user(): User
+        + update_user_stats()
+        + get_top_users(): List[User]
+    }
+    
+    Server *-- ServerThread
+    Server *-- RoomManager
+    ServerThread *-- UserDAO
+}
+
+Client ..> User
+Client ..> Room
+GameView ..> Room
+HomeView ..> Room
+ServerThread ..> User
+ServerThread ..> Room
+
+@enduml
