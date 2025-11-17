@@ -14,8 +14,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import from same directory
 from config import SERVER_HOST, SERVER_PORT, MAX_CLIENTS
 from server_thread import ServerThread
-
-
 class ServerThreadBus:
     """Manages all active server threads and rooms"""
     
