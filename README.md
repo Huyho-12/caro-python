@@ -34,7 +34,7 @@
 - ✅ **Tkinter GUI** - Giao diện đồ họa thân thiện
 - ✅ **Login/Register** - Quản lý tài khoản người chơi
 - ✅ **Room System** - Tạo phòng (có/không mật khẩu), xem danh sách phòng
-- ✅ **Game Board 20x20** - Caro board với win condition: 5 in a row
+- ✅ **Game Board 15x15** - Caro board với win condition: 5 in a row
 - ✅ **Real-time Updates** - Cập nhật nước đi đối thủ ngay lập tức
 - ✅ **Chat System** - Chat trong game với đối thủ
 - ✅ **User Statistics** - Xem thống kê cá nhân (wins, draws, games)
@@ -75,9 +75,9 @@
 
 | Mode | Description | Board Size | Status |
 |------|-------------|------------|--------|
-| 🤖 **AI Mode** | Chơi với AI (Easy/Medium/Hard) | 20x20 | ✅ Hoàn thành |
-| 👥 **Multiplayer** | Chơi với người khác (Local/Online) | 20x20 | ✅ Hoàn thành |
-| 🏠 **Practice** | Luyện tập offline | 20x20 | ✅ Hoàn thành |
+| 🤖 **AI Mode** | Chơi với AI (Easy/Medium/Hard) | 15x15 | ✅ Hoàn thành |
+| 👥 **Multiplayer** | Chơi với người khác (Local/Online) | 15x15 | ✅ Hoàn thành |
+| 🏠 **Practice** | Luyện tập offline | 15x15 | ✅ Hoàn thành |
 
 ---
 
