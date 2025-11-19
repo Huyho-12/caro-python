@@ -193,9 +193,76 @@ class HomeView:
         # Will be handled in client when response arrives
     
     def play_with_ai(self):
-        """Play with AI"""
-        self.window.withdraw()
-        self.client.open_ai_game_view()
+        """Play with AI - Show difficulty selection dialog"""
+        # Create difficulty selection dialog
+        difficulty_window = tk.Toplevel(self.window)
+        difficulty_window.title("Chọn độ khó AI")
+        difficulty_window.geometry("400x380")
+        difficulty_window.resizable(False, False)
+        difficulty_window.transient(self.window)
+        difficulty_window.grab_set()
+        
+        # Center the dialog
+        self.center_dialog(difficulty_window, 400, 380)
+        
+        # Title
+        title_frame = tk.Frame(difficulty_window, bg="#2196F3")
+        title_frame.pack(fill=tk.X)
+        tk.Label(title_frame, text="🎮 CHỌN ĐỘ KHÓ AI", font=("Arial", 16, "bold"),
+                bg="#2196F3", fg="white").pack(pady=15)
+        
+        # Description
+        desc_frame = tk.Frame(difficulty_window, bg="#f5f5f5")
+        desc_frame.pack(fill=tk.X, padx=20, pady=15)
+        tk.Label(desc_frame, text="Chọn mức độ thử thách phù hợp với bạn:",
+                font=("Arial", 11), bg="#f5f5f5").pack(pady=5)
+        
+        # Buttons frame
+        buttons_frame = tk.Frame(difficulty_window)
+        buttons_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        
+        def start_game(level):
+            difficulty_window.destroy()
+            self.window.withdraw()
+            self.client.open_ai_game_view(level)
+        
+        # Easy button
+        easy_frame = tk.Frame(buttons_frame, bg="#4CAF50", relief=tk.RAISED, bd=3)
+        easy_frame.pack(fill=tk.X, pady=8)
+        tk.Button(easy_frame, text="😊 DỄ", font=("Arial", 14, "bold"),
+                 bg="#4CAF50", fg="white", width=30, height=1, bd=0,
+                 command=lambda: start_game("easy")).pack()
+        tk.Label(easy_frame, text="AI đánh ngẫu nhiên - Phù hợp người mới",
+                font=("Arial", 9), bg="#4CAF50", fg="white").pack(pady=(0, 5))
+        
+        # Medium button
+        medium_frame = tk.Frame(buttons_frame, bg="#FF9800", relief=tk.RAISED, bd=3)
+        medium_frame.pack(fill=tk.X, pady=8)
+        tk.Button(medium_frame, text="😐 TRUNG BÌNH", font=("Arial", 14, "bold"),
+                 bg="#FF9800", fg="white", width=30, height=1, bd=0,
+                 command=lambda: start_game("medium")).pack()
+        tk.Label(medium_frame, text="AI thông minh (độ sâu 2) - Khuyên dùng",
+                font=("Arial", 9), bg="#FF9800", fg="white").pack(pady=(0, 5))
+        
+        # Hard button
+        hard_frame = tk.Frame(buttons_frame, bg="#f44336", relief=tk.RAISED, bd=3)
+        hard_frame.pack(fill=tk.X, pady=8)
+        tk.Button(hard_frame, text="😤 KHÓ", font=("Arial", 14, "bold"),
+                 bg="#f44336", fg="white", width=30, height=1, bd=0,
+                 command=lambda: start_game("hard")).pack()
+        tk.Label(hard_frame, text="AI cao cấp (độ sâu 3) - Thử thách lớn!",
+                font=("Arial", 9), bg="#f44336", fg="white").pack(pady=(0, 5))
+        
+        # Cancel button
+        tk.Button(buttons_frame, text="✖ Hủy", font=("Arial", 11),
+                 bg="#9E9E9E", fg="white", width=15,
+                 command=difficulty_window.destroy).pack(pady=10)
+    
+    def center_dialog(self, dialog, width, height):
+        """Center dialog relative to parent window"""
+        x = self.window.winfo_x() + (self.window.winfo_width() // 2) - (width // 2)
+        y = self.window.winfo_y() + (self.window.winfo_height() // 2) - (height // 2)
+        dialog.geometry(f"{width}x{height}+{x}+{y}")
     
     def logout(self):
         """Logout"""

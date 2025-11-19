@@ -91,8 +91,15 @@ class GameAIView:
                                     font=("Arial", 14), bg="#f0f0f0")
         self.score_label.pack()
         
-        tk.Label(center_frame, text=f"Độ khó: {self.get_difficulty_name()}",
-                font=("Arial", 12), bg="#f0f0f0", fg="#666").pack()
+        # Difficulty indicator with icon
+        difficulty_colors = {"easy": "#4CAF50", "medium": "#FF9800", "hard": "#f44336"}
+        difficulty_icons = {"easy": "😊", "medium": "😐", "hard": "😤"}
+        difficulty_text = f"{difficulty_icons[self.difficulty]} Độ khó: {self.get_difficulty_name()}"
+        
+        self.difficulty_label = tk.Label(center_frame, text=difficulty_text,
+                font=("Arial", 12, "bold"), bg=difficulty_colors[self.difficulty],
+                fg="white", padx=10, pady=3, relief=tk.RAISED, bd=2)
+        self.difficulty_label.pack(pady=3)
         
         # AI
         ai_frame = tk.Frame(top_frame, bg="#FF5722", relief=tk.RAISED, bd=2)
@@ -348,37 +355,98 @@ class GameAIView:
         self.update_turn_display()
     
     def change_difficulty(self):
-        """Change AI difficulty"""
+        """Change AI difficulty with enhanced dialog"""
         difficulty_window = tk.Toplevel(self.window)
-        difficulty_window.title("Chọn độ khó")
-        difficulty_window.geometry("300x200")
+        difficulty_window.title("Đổi độ khó AI")
+        difficulty_window.geometry("400x420")
         difficulty_window.resizable(False, False)
+        difficulty_window.transient(self.window)
+        difficulty_window.grab_set()
         
         # Center window
-        x = self.window.winfo_x() + (self.window.winfo_width() // 2) - 150
-        y = self.window.winfo_y() + (self.window.winfo_height() // 2) - 100
-        difficulty_window.geometry(f"300x200+{x}+{y}")
+        x = self.window.winfo_x() + (self.window.winfo_width() // 2) - 200
+        y = self.window.winfo_y() + (self.window.winfo_height() // 2) - 210
+        difficulty_window.geometry(f"400x420+{x}+{y}")
         
-        tk.Label(difficulty_window, text="Chọn độ khó:", font=("Arial", 14, "bold")).pack(pady=20)
+        # Title
+        title_frame = tk.Frame(difficulty_window, bg="#2196F3")
+        title_frame.pack(fill=tk.X)
+        tk.Label(title_frame, text="⚙️ ĐỔI ĐỘ KHÓ AI", font=("Arial", 16, "bold"),
+                bg="#2196F3", fg="white").pack(pady=15)
+        
+        # Current difficulty
+        current_frame = tk.Frame(difficulty_window, bg="#f5f5f5")
+        current_frame.pack(fill=tk.X, padx=20, pady=10)
+        tk.Label(current_frame, text=f"Độ khó hiện tại: {self.get_difficulty_name()}",
+                font=("Arial", 11, "bold"), bg="#f5f5f5").pack(pady=5)
+        tk.Label(current_frame, text="Chọn độ khó mới (sẽ bắt đầu ván mới):",
+                font=("Arial", 10), bg="#f5f5f5", fg="#666").pack()
+        
+        # Buttons frame
+        buttons_frame = tk.Frame(difficulty_window)
+        buttons_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
         
         def select_difficulty(level):
+            if level == self.difficulty:
+                messagebox.showinfo("Thông báo", "Bạn đã đang chơi ở độ khó này!")
+                return
+            
             self.difficulty = level
             self.ai = AIPlayer(level)
+            
+            # Update window title
             self.window.title(f"Chơi với AI - Độ khó: {self.get_difficulty_name()}")
+            
+            # Update difficulty label with new color
+            difficulty_colors = {"easy": "#4CAF50", "medium": "#FF9800", "hard": "#f44336"}
+            difficulty_icons = {"easy": "😊", "medium": "😐", "hard": "😤"}
+            difficulty_text = f"{difficulty_icons[level]} Độ khó: {self.get_difficulty_name()}"
+            self.difficulty_label.config(text=difficulty_text, bg=difficulty_colors[level])
+            
             difficulty_window.destroy()
+            messagebox.showinfo("Thành công", f"Đã đổi sang độ khó: {self.get_difficulty_name()}\nVán mới đã bắt đầu!")
             self.new_game()
         
-        tk.Button(difficulty_window, text="😊 Dễ", font=("Arial", 12),
-                 bg="#4CAF50", fg="white", width=20,
-                 command=lambda: select_difficulty("easy")).pack(pady=5)
+        # Easy button with description
+        easy_frame = tk.Frame(buttons_frame, bg="#4CAF50", relief=tk.RAISED, bd=3)
+        easy_frame.pack(fill=tk.X, pady=8)
+        tk.Button(easy_frame, text="😊 DỄ", font=("Arial", 14, "bold"),
+                 bg="#4CAF50", fg="white", width=30, height=1, bd=0,
+                 command=lambda: select_difficulty("easy")).pack()
+        tk.Label(easy_frame, text="AI đánh ngẫu nhiên - Dễ thắng",
+                font=("Arial", 9), bg="#4CAF50", fg="white").pack(pady=(0, 5))
+        if self.difficulty == "easy":
+            tk.Label(easy_frame, text="✓ ĐANG CHƠI", font=("Arial", 8, "bold"),
+                    bg="#4CAF50", fg="yellow").pack(pady=(0, 3))
         
-        tk.Button(difficulty_window, text="😐 Trung bình", font=("Arial", 12),
-                 bg="#FF9800", fg="white", width=20,
-                 command=lambda: select_difficulty("medium")).pack(pady=5)
+        # Medium button with description
+        medium_frame = tk.Frame(buttons_frame, bg="#FF9800", relief=tk.RAISED, bd=3)
+        medium_frame.pack(fill=tk.X, pady=8)
+        tk.Button(medium_frame, text="😐 TRUNG BÌNH", font=("Arial", 14, "bold"),
+                 bg="#FF9800", fg="white", width=30, height=1, bd=0,
+                 command=lambda: select_difficulty("medium")).pack()
+        tk.Label(medium_frame, text="AI thông minh (độ sâu 2) - Cân bằng",
+                font=("Arial", 9), bg="#FF9800", fg="white").pack(pady=(0, 5))
+        if self.difficulty == "medium":
+            tk.Label(medium_frame, text="✓ ĐANG CHƠI", font=("Arial", 8, "bold"),
+                    bg="#FF9800", fg="yellow").pack(pady=(0, 3))
         
-        tk.Button(difficulty_window, text="😤 Khó", font=("Arial", 12),
-                 bg="#f44336", fg="white", width=20,
-                 command=lambda: select_difficulty("hard")).pack(pady=5)
+        # Hard button with description
+        hard_frame = tk.Frame(buttons_frame, bg="#f44336", relief=tk.RAISED, bd=3)
+        hard_frame.pack(fill=tk.X, pady=8)
+        tk.Button(hard_frame, text="😤 KHÓ", font=("Arial", 14, "bold"),
+                 bg="#f44336", fg="white", width=30, height=1, bd=0,
+                 command=lambda: select_difficulty("hard")).pack()
+        tk.Label(hard_frame, text="AI cao cấp (độ sâu 3) - Rất khó thắng!",
+                font=("Arial", 9), bg="#f44336", fg="white").pack(pady=(0, 5))
+        if self.difficulty == "hard":
+            tk.Label(hard_frame, text="✓ ĐANG CHƠI", font=("Arial", 8, "bold"),
+                    bg="#f44336", fg="yellow").pack(pady=(0, 3))
+        
+        # Cancel button
+        tk.Button(buttons_frame, text="✖ Hủy", font=("Arial", 11),
+                 bg="#9E9E9E", fg="white", width=15,
+                 command=difficulty_window.destroy).pack(pady=10)
     
     def go_home(self):
         """Return to home page"""

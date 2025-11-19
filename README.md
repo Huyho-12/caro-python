@@ -392,79 +392,79 @@ caro-python/
 
 ---
 
-## 📚 Documentation
+## 📚 Tài liệu
 
-| Document | Description |
-|----------|-------------|
-| [QUICKSTART.md](QUICKSTART.md) | 🚀 5-minute quick start guide |
-| [INSTALL.md](INSTALL.md) | 📦 Detailed installation instructions |
-| [MULTIPLAYER_GUIDE.md](MULTIPLAYER_GUIDE.md) | 🌐 LAN/WiFi multiplayer setup |
-| [CHANGELOG.md](CHANGELOG.md) | 📝 Version history & updates |
+| Tài liệu | Mô tả |
+|----------|-------|
+| [QUICKSTART.md](QUICKSTART.md) | 🚀 Hướng dẫn nhanh 5 phút |
+| [INSTALL.md](INSTALL.md) | 📦 Hướng dẫn cài đặt chi tiết |
+| [MULTIPLAYER_GUIDE.md](MULTIPLAYER_GUIDE.md) | 🌐 Hướng dẫn chơi qua LAN/WiFi |
+| [CHANGELOG.md](CHANGELOG.md) | 📝 Lịch sử phiên bản & cập nhật |
 
 ---
 
-## 🎯 API & Commands
+## 🎯 API & Lệnh
 
-### Quick Commands
+### Lệnh nhanh
 
 ```bash
-# Development
-python check_ip.py              # Check machine IP address
-python create_database.py       # Setup database automatically
+# Phát triển
+python check_ip.py              # Kiểm tra địa chỉ IP của máy
+python create_database.py       # Tự động thiết lập database
 
-# Running
-python server/server.py         # Start game server
-python client/main.py           # Start game client
+# Chạy
+python server/server.py         # Khởi động server
+python client/main.py           # Khởi động client
 
-# Testing
-python -m pytest tests/         # Run unit tests (if available)
+# Kiểm thử
+python -m pytest tests/         # Chạy unit tests (nếu có)
 ```
 
-### Server Configuration
+### Cấu hình Server
 
 File: `server/config.py`
 ```python
 DB_CONFIG = {
     'host': 'localhost',          # MySQL host
-    'user': 'root',                # MySQL username  
-    'password': '',                # MySQL password (empty for XAMPP)
-    'database': 'caro_game'        # Database name
+    'user': 'root',                # Tên đăng nhập MySQL  
+    'password': '',                # Mật khẩu MySQL (để trống cho XAMPP)
+    'database': 'caro_game'        # Tên database
 }
 
-SERVER_HOST = '0.0.0.0'           # Listen on all interfaces
-SERVER_PORT = 7777                # Server port
-MAX_CLIENTS = 50                  # Max concurrent clients
+SERVER_HOST = '0.0.0.0'           # Lắng nghe trên tất cả giao diện mạng
+SERVER_PORT = 7777                # Cổng server
+MAX_CLIENTS = 50                  # Số lượng client tối đa
 ```
 
-### Client Configuration
+### Cấu hình Client
 
 File: `network_config.py`
 ```python
-SERVER_IP = "127.0.0.1"           # Server IP (localhost)
-SERVER_PORT = 7777                # Server port (must match server)
+SERVER_IP = "127.0.0.1"           # IP server (localhost)
+SERVER_PORT = 7777                # Cổng server (phải khớp với server)
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## 🐛 Khắc phục sự cố
 
 <details>
-<summary><strong>❌ Database Connection Failed</strong></summary>
+<summary><strong>❌ Kết nối Database thất bại</strong></summary>
 
-**Problem:** `Can't connect to MySQL server`
+**Vấn đề:** `Can't connect to MySQL server`
 
-**Solutions:**
-1. Start MySQL/XAMPP:
+**Giải pháp:**
+1. Khởi động MySQL/XAMPP:
    ```bash
-   # Windows: Open XAMPP Control Panel → Start MySQL
+   # Windows: Mở XAMPP Control Panel → Start MySQL
    # Linux: sudo systemctl start mysql
    ```
-2. Verify credentials in `server/config.py`
-3. Create database:
+2. Kiểm tra thông tin đăng nhập trong `server/config.py`
+3. Tạo database:
    ```bash
    python create_database.py
    ```
-4. Check MySQL is running:
+4. Kiểm tra MySQL đang chạy:
    ```bash
    netstat -ano | findstr 3306
    ```
@@ -472,44 +472,44 @@ SERVER_PORT = 7777                # Server port (must match server)
 </details>
 
 <details>
-<summary><strong>❌ Server Connection Timeout</strong></summary>
+<summary><strong>❌ Kết nối Server timeout</strong></summary>
 
-**Problem:** Client can't connect to server
+**Vấn đề:** Client không thể kết nối đến server
 
-**Solutions:**
-1. Verify server is running
-2. Check `network_config.py` has correct IP
-3. Disable Firewall temporarily or allow port 7777
-4. Test connection:
+**Giải pháp:**
+1. Xác nhận server đang chạy
+2. Kiểm tra `network_config.py` có IP đúng
+3. Tạm thời tắt Firewall hoặc cho phép cổng 7777
+4. Kiểm tra kết nối:
    ```bash
-   ping 192.168.1.100  # Replace with server IP
+   ping 192.168.1.100  # Thay bằng IP server
    telnet 192.168.1.100 7777
    ```
 
 </details>
 
 <details>
-<summary><strong>⚠️ AI Too Slow</strong></summary>
+<summary><strong>⚠️ AI chậm</strong></summary>
 
-**Problem:** AI takes too long to make a move
+**Vấn đề:** AI mất quá nhiều thời gian để đi nước
 
-**Solutions:**
-- Use "Medium" difficulty (recommended)
-- "Hard" difficulty may take 3-5 seconds
-- Ensure your CPU meets requirements
+**Giải pháp:**
+- Dùng độ khó "Trung bình" (khuyên dùng)
+- Độ khó "Khó" có thể mất 3-5 giây
+- Đảm bảo CPU đáp ứng yêu cầu
 
 </details>
 
 <details>
-<summary><strong>⚠️ GUI Not Responding</strong></summary>
+<summary><strong>⚠️ Giao diện không phản hồi</strong></summary>
 
-**Problem:** Window freezes or doesn't update
+**Vấn đề:** Cửa sổ bị đơ hoặc không cập nhật
 
-**Solutions:**
-1. Close and restart client
-2. Check server logs for errors
-3. Verify Python 3.8+ is installed
-4. Update Tkinter:
+**Giải pháp:**
+1. Đóng và khởi động lại client
+2. Kiểm tra logs của server
+3. Xác nhận Python 3.8+ đã cài đặt
+4. Cập nhật Tkinter:
    ```bash
    # Linux
    sudo apt-get install python3-tk
@@ -519,39 +519,39 @@ SERVER_PORT = 7777                # Server port (must match server)
 
 ---
 
-## 🎯 Highlights & Features
+## 🎯 Điểm nổi bật & Tính năng
 
-### 🤖 Intelligent AI
-- **Algorithm:** Minimax with Alpha-Beta Pruning
-- **Difficulty Levels:** Easy (random), Medium (depth 2), Hard (depth 3)
-- **Optimization:** Move ordering, heuristic evaluation, smart move selection
-- **Performance:** < 2s response time on average hardware
+### 🤖 AI thông minh
+- **Thuật toán:** Minimax với Alpha-Beta Pruning
+- **Độ khó:** Dễ (ngẫu nhiên), Trung bình (độ sâu 2), Khó (độ sâu 3)
+- **Tối ưu hóa:** Sắp xếp nước đi, đánh giá heuristic, chọn nước đi thông minh
+- **Hiệu năng:** Thời gian phản hồi < 2s trên phần cứng trung bình
 
-### 🌐 Networking
-- **Protocol:** Custom socket-based protocol
-- **Architecture:** Multi-threaded server with ThreadPoolExecutor
-- **Scalability:** Supports 50+ concurrent clients
-- **Features:** Room management, user authentication, real-time updates
+### 🌐 Mạng
+- **Giao thức:** Giao thức socket tùy chỉnh
+- **Kiến trúc:** Server đa luồng với ThreadPoolExecutor
+- **Khả năng mở rộng:** Hỗ trợ 50+ client đồng thời
+- **Tính năng:** Quản lý phòng, xác thực người dùng, cập nhật real-time
 
-### 🎨 User Experience
-- **GUI Framework:** Tkinter with custom components
-- **Responsive:** Queue-based event handling for smooth UI
-- **Intuitive:** Simple navigation, clear game state indicators
-- **Customizable:** Easy to extend and modify
+### 🎨 Trải nghiệm người dùng
+- **Framework GUI:** Tkinter với các component tùy chỉnh
+- **Phản hồi nhanh:** Xử lý sự kiện dựa trên Queue để UI mượt mà
+- **Trực quan:** Điều hướng đơn giản, chỉ báo trạng thái game rõ ràng
+- **Tùy chỉnh:** Dễ dàng mở rộng và sửa đổi
 
 ---
 
-## � Contributing
+## 💡 Đóng góp
 
-We welcome contributions! Here's how you can help:
+Chúng tôi hoan nghênh mọi đóng góp! Đây là cách bạn có thể giúp đỡ:
 
-1. **Report Bugs:** Open an issue with detailed description
-2. **Suggest Features:** Share your ideas in issues
-3. **Submit Pull Requests:** Fork, create branch, commit, push, PR
-4. **Improve Documentation:** Fix typos, add examples
-5. **Share:** Star ⭐ the project and share with friends!
+1. **Báo lỗi:** Mở issue với mô tả chi tiết
+2. **Đề xuất tính năng:** Chia sẻ ý tưởng của bạn trong issues
+3. **Gửi Pull Request:** Fork, tạo branch, commit, push, PR
+4. **Cải thiện tài liệu:** Sửa lỗi chính tả, thêm ví dụ
+5. **Chia sẻ:** Star ⭐ dự án và chia sẻ với bạn bè!
 
-### Development Setup
+### Thiết lập môi trường phát triển
 
 ```bash
 git clone https://github.com/Huyho-12/caro-python.git
@@ -560,69 +560,68 @@ pip install -r requirements.txt
 python create_database.py
 ```
 
-### Code Style
-- Follow PEP 8 guidelines
-- Add docstrings to functions
-- Comment complex logic
-- Test before committing
+### Quy tắc code
+- Tuân thủ hướng dẫn PEP 8
+- Thêm docstrings cho các hàm
+- Comment các logic phức tạp
+- Kiểm thử trước khi commit
 
 ---
 
-## 📊 Project Status
+## 📊 Trạng thái dự án
 
-| Feature | Status | Version |
-|---------|--------|---------|
-| Core Game Engine | ✅ Complete | 2.0.0 |
-| AI Player | ✅ Complete | 2.0.0 |
-| Multiplayer (LAN) | ✅ Complete | 2.0.0 |
-| User Authentication | ✅ Complete | 2.0.0 |
-| Room Management | ✅ Complete | 2.0.0 |
-| Friend System | 🚧 In Progress | TBD |
-| Tournament Mode | 📋 Planned | TBD |
-| Sound Effects | 📋 Planned | TBD |
-| Online Multiplayer | 📋 Planned | TBD |
-
----
-
-## 🙏 Acknowledgments
-
-- **Python Community** - For amazing libraries and support
-- **MySQL** - Reliable database system
-- **Tkinter** - Simple yet powerful GUI framework
-- **Minimax Algorithm** - Foundation of AI intelligence
+| Tính năng | Trạng thái | Phiên bản |
+|-----------|-----------|-----------|
+| Core Game Engine | ✅ Hoàn thành | 2.0.0 |
+| AI Player | ✅ Hoàn thành | 2.0.0 |
+| Multiplayer (LAN) | ✅ Hoàn thành | 2.0.0 |
+| User Authentication | ✅ Hoàn thành | 2.0.0 |
+| Room Management | ✅ Hoàn thành | 2.0.0 |
+| Friend System | 🚧 Đang phát triển | TBD |
+| Tournament Mode | 📋 Đã lên kế hoạch | TBD |
+| Sound Effects | 📋 Đã lên kế hoạch | TBD |
+| Online Multiplayer | 📋 Đã lên kế hoạch | TBD |
 
 ---
 
-## 📄 License
+## 🙏 Lời cảm ơn
+
+- **Python Community** - Thư viện tuyệt vời và sự hỗ trợ
+- **MySQL** - Hệ thống database đáng tin cậy
+- **Tkinter** - Framework GUI đơn giản nhưng mạnh mẽ
+- **Minimax Algorithm** - Nền tảng của trí tuệ AI
+
+---
+
+## 📄 Giấy phép
 
 ```
-MIT License
+Giấy phép MIT
 
-Copyright (c) 2025 Caro Game Python
+Bản quyền (c) 2025 Caro Game Python
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Cho phép miễn phí bất kỳ ai có được bản sao phần mềm này và các tệp tài liệu
+liên quan ("Phần mềm"), để xử lý Phần mềm không bị hạn chế, bao gồm nhưng
+không giới hạn quyền sử dụng, sao chép, sửa đổi, hợp nhất, xuất bản, phân phối,
+cấp phép phụ và/hoặc bán bản sao của Phần mềm, và cho phép những người được
+cung cấp Phần mềm được phép làm như vậy, với các điều kiện sau:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Thông báo bản quyền ở trên và thông báo cho phép này phải được bao gồm trong
+tất cả các bản sao hoặc phần quan trọng của Phần mềm.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN BẢN", KHÔNG CÓ BẤT KỲ BẢO ĐẢM NÀO, RÕ RÀNG
+HOẶC NGỤ Ý, BAO GỒM NHƯNG KHÔNG GIỚI HẠN BẢO ĐẢM VỀ KHẢ NĂNG BÁN ĐƯỢC, PHÙ
+HỢP CHO MỤC ĐÍCH CỤ THỂ VÀ KHÔNG VI PHẠM.
 ```
 
 ---
 
 <div align="center">
 
-**Made with ❤️ and ☕**
+**Được tạo với ❤️ và ☕**
 
-⭐ Star this project if you find it useful!
+⭐ Star dự án này nếu bạn thấy hữu ích!
 
-[⬆ Back to top](#-caro-game---python-edition)
+[⬆ Về đầu trang](#-caro-game---python-client-server)
 
 </div>
