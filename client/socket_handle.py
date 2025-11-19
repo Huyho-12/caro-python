@@ -21,6 +21,7 @@ class SocketHandle:
         self.is_connected = False
         self.receive_thread = None
         self.message_queue = Queue()  # Thread-safe queue
+        self.after_id = None  # Store after callback ID
     
     def connect(self):
         """Connect to server"""
@@ -137,6 +138,7 @@ class SocketHandle:
         
         # New room created
         elif command == "new-room":
+            print(f"Received new-room message: {message}")
             if len(parts) >= 4:
                 room = {
                     'id': int(parts[1]),
@@ -144,6 +146,7 @@ class SocketHandle:
                     'host': parts[3],
                     'has_password': parts[4] == '1' if len(parts) > 4 else False
                 }
+                print(f"Parsed room: {room}")
                 self.client.on_new_room(room)
         
         # Create room success
@@ -240,6 +243,16 @@ class SocketHandle:
     
     def process_queue(self):
         """Process messages from queue in main thread"""
+        # Cancel previous after callback if exists
+        if self.after_id and self.client.current_view and hasattr(self.client.current_view, 'window'):
+            try:
+                self.client.current_view.window.after_cancel(self.after_id)
+            except:
+                pass
+        
+        if not self.is_connected:
+            return
+            
         try:
             while not self.message_queue.empty():
                 message = self.message_queue.get_nowait()
@@ -250,7 +263,9 @@ class SocketHandle:
         # Schedule next check if still connected
         if self.is_connected and self.client.current_view and hasattr(self.client.current_view, 'window'):
             try:
-                self.client.current_view.window.after(100, self.process_queue)
+                # Check if window still exists and is not destroyed
+                if self.client.current_view.window.winfo_exists():
+                    self.after_id = self.client.current_view.window.after(100, self.process_queue)
             except:
                 pass
     

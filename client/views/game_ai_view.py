@@ -114,20 +114,24 @@ class GameAIView:
         self.ai_turn_label.pack(padx=20, pady=2)
     
     def create_game_board(self):
-        """Create simple game board (no scrollbars)"""
-        # Container frame
-        container = tk.Frame(self.window, bg="white")
-        container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        """Create game board centered"""
+        # Main board container
+        board_container = tk.Frame(self.window, bg="#f5f5f5")
+        board_container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         
-        # Create frame for board
-        board_frame = tk.Frame(container, bg="white")
-        board_frame.pack(expand=True)
+        # Create centered frame for the board
+        center_frame = tk.Frame(board_container, bg="#f5f5f5")
+        center_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        
+        # Create frame for board buttons
+        board_frame = tk.Frame(center_frame, bg="white", relief=tk.RAISED, bd=3)
+        board_frame.pack()
         
         # Create board buttons
         for i in range(self.board_size):
             row = []
             for j in range(self.board_size):
-                btn = tk.Button(board_frame, text="", width=3, height=1,
+                btn = tk.Button(board_frame, text="", width=2, height=1,
                               font=("Arial", 14, "bold"), bg="white",
                               relief=tk.RAISED, bd=1,
                               command=lambda x=i, y=j: self.make_move(x, y))

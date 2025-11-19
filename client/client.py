@@ -77,6 +77,8 @@ class Client:
             self.current_view.window.deiconify()
             self.current_view.window.lift()
             self.current_view.window.focus_force()
+            # Start processing messages for this view
+            self.socket_handle.process_queue()
     
     def open_game_view(self, room_id, competitor, is_host, competitor_ip):
         """Open game view"""
@@ -97,6 +99,8 @@ class Client:
         self.game_view.window.deiconify()
         self.game_view.window.lift()
         self.game_view.window.focus_force()
+        # Start processing messages for this view
+        self.socket_handle.process_queue()
     
     def open_ai_game_view(self, difficulty="medium"):
         """Open AI game view"""
@@ -117,6 +121,8 @@ class Client:
         self.game_view.window.deiconify()
         self.game_view.window.lift()
         self.game_view.window.focus_force()
+        # Start processing messages for this view
+        self.socket_handle.process_queue()
     
     # Callbacks from socket handler
     def on_login_success(self, user):
@@ -151,8 +157,11 @@ class Client:
     
     def on_new_room(self, room):
         """Handle new room notification"""
-        # Refresh room list
-        if self.current_view and hasattr(self.current_view, 'refresh_rooms'):
+        # Add new room to the list
+        if self.current_view and hasattr(self.current_view, 'add_room_to_list'):
+            self.current_view.add_room_to_list(room)
+        # Also refresh the entire list
+        elif self.current_view and hasattr(self.current_view, 'refresh_rooms'):
             self.current_view.refresh_rooms()
     
     def on_create_room_success(self, room_id):

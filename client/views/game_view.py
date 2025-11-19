@@ -107,27 +107,18 @@ class GameView:
         self.competitor_turn_label.pack(padx=20, pady=2)
     
     def create_game_board(self):
-        """Create game board with scrollbars"""
-        # Container frame with scrollbars
-        container = tk.Frame(self.window)
-        container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        """Create game board centered"""
+        # Main board container
+        board_container = tk.Frame(self.window, bg="#f5f5f5")
+        board_container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         
-        # Create canvas
-        canvas = tk.Canvas(container, width=600, height=400, bg="white")
-        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # Create centered frame for the board
+        center_frame = tk.Frame(board_container, bg="#f5f5f5")
+        center_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         
-        # Add scrollbars
-        v_scrollbar = tk.Scrollbar(container, orient=tk.VERTICAL, command=canvas.yview)
-        v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        
-        h_scrollbar = tk.Scrollbar(self.window, orient=tk.HORIZONTAL, command=canvas.xview)
-        h_scrollbar.pack(fill=tk.X)
-        
-        canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
-        
-        # Create frame inside canvas
-        board_frame = tk.Frame(canvas, bg="white")
-        canvas_window = canvas.create_window((0, 0), window=board_frame, anchor="nw")
+        # Create frame for board buttons
+        board_frame = tk.Frame(center_frame, bg="white", relief=tk.RAISED, bd=3)
+        board_frame.pack()
         
         # Create buttons for board
         for i in range(self.board_size):
@@ -140,16 +131,6 @@ class GameView:
                 btn.grid(row=i, column=j, padx=0, pady=0)
                 row.append(btn)
             self.buttons.append(row)
-        
-        # Update scroll region
-        board_frame.update_idletasks()
-        canvas.config(scrollregion=canvas.bbox("all"))
-        
-        # Mouse wheel scrolling
-        def on_mousewheel(event):
-            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-        
-        canvas.bind_all("<MouseWheel>", on_mousewheel)
     
     def create_bottom_controls(self):
         """Create bottom control panel"""

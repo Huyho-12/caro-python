@@ -152,6 +152,31 @@ class HomeView:
                 password_status
             ))
     
+    def add_room_to_list(self, room):
+        """Add a single room to the list"""
+        print(f"add_room_to_list called with room: {room}")
+        password_status = "Có" if room.get('has_password') else "Không"
+        # Check if room already exists
+        for item in self.room_tree.get_children():
+            if self.room_tree.item(item)['values'][0] == room['id']:
+                # Update existing room
+                print(f"Updating existing room {room['id']}")
+                self.room_tree.item(item, values=(
+                    room['id'],
+                    room['host'],
+                    f"{room['players']}/2",
+                    password_status
+                ))
+                return
+        # Add new room
+        print(f"Adding new room {room['id']} to list")
+        self.room_tree.insert("", tk.END, values=(
+            room['id'],
+            room['host'],
+            f"{room['players']}/2",
+            password_status
+        ))
+    
     def create_room(self):
         """Create new room"""
         # Ask for password

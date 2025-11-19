@@ -272,6 +272,35 @@ class UserDAO:
             print(f"Error adding friend: {e}")
             return False
     
+    def reset_all_online_status(self):
+        """Reset all users to offline status (used on server startup)"""
+        try:
+            cursor = self.connection.cursor()
+            query = "UPDATE user SET IsOnline = 0, IsPlaying = 0"
+            cursor.execute(query)
+            self.connection.commit()
+            affected_rows = cursor.rowcount
+            cursor.close()
+            print(f"Reset {affected_rows} users to offline status")
+            return True
+        except Error as e:
+            print(f"Error resetting online status: {e}")
+            return False
+    
+    def force_logout(self, user_id):
+        """Force logout a user (disconnect existing session)"""
+        try:
+            cursor = self.connection.cursor()
+            query = "UPDATE user SET IsOnline = 0, IsPlaying = 0 WHERE ID = %s"
+            cursor.execute(query, (user_id,))
+            self.connection.commit()
+            cursor.close()
+            print(f"Forced logout for user ID: {user_id}")
+            return True
+        except Error as e:
+            print(f"Error forcing logout: {e}")
+            return False
+    
     def close(self):
         """Close database connection"""
         if self.connection and self.connection.is_connected():

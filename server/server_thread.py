@@ -125,7 +125,15 @@ class ServerThread(threading.Thread):
             user = self.user_dao.verify_user(username, password)
             if not user:
                 self.write(f"wrong-user,{username},{password}")
-            elif not user.is_online and not self.user_dao.check_is_banned(user.id):
+            elif self.user_dao.check_is_banned(user.id):
+                self.write(f"banned-user,{username},{password}")
+            else:
+                # Force logout if already online (allow login from new location)
+                if user.is_online:
+                    print(f"Force logout user {user.nickname} - logging in from new location")
+                    self.user_dao.force_logout(user.id)
+                
+                # Allow login
                 self.write(f"login-success,{self.get_string_from_user(user)}")
                 self.user = user
                 self.user_dao.update_to_online(self.user.id)
@@ -135,10 +143,6 @@ class ServerThread(threading.Thread):
                 )
                 if self.admin:
                     self.admin.add_message(f"[{user.id}] {user.nickname} đang online")
-            elif self.user_dao.check_is_banned(user.id):
-                self.write(f"banned-user,{username},{password}")
-            else:
-                self.write(f"dupplicate-login,{username},{password}")
         
         # Registration
         elif command == "register":

@@ -75,6 +75,7 @@ class ServerThreadBus:
         if room.user1 and room.user1.user:
             message = (f"new-room,{room.id},1,{room.user1.user.nickname},"
                       f"{'1' if room.password else '0'}")
+            print(f"Broadcasting new room: {message}")
             self.broadcast(room.user1.client_number, message)
     
     def get_length(self):
@@ -108,6 +109,13 @@ class Server:
         self.admin = AdminConsole()
         self.client_number = 0
         self.is_running = False
+        
+        # Reset all users to offline on startup
+        from user_dao import UserDAO
+        user_dao = UserDAO()
+        if user_dao.connection:
+            user_dao.reset_all_online_status()
+            user_dao.close()
     
     def start(self):
         """Start the server"""
